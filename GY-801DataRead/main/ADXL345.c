@@ -15,7 +15,7 @@ void initI2C()
 	conf.scl_io_num = SCL_PIN;
 	conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
 	conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-	conf.master.clk_speed = 100000;
+	conf.master.clk_speed = 400000;
 	i2c_param_config(I2C_NUM_0, &conf);
 	i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, 0, 0, 0);
 }
@@ -31,7 +31,7 @@ void initADXL345()
 	setMeasureEnabled(true); //enable the meas
 	setAutoSleepEnabled(false);
 	//set the maximum sampling rate
-	i2cWriteByte(adxl345I2CAddress, ADXL345_RA_BW_RATE, ADXL345_RATE_3200);
+	i2cWriteByte(adxl345I2CAddress, ADXL345_RA_BW_RATE, ADXL345_RATE_1600);
 
 }
 
