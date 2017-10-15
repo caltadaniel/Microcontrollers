@@ -9,6 +9,7 @@
 #define MAIN_ADXL345_H_
 
 #include <driver/i2c.h>
+#include <esp_log.h>
 
 #define ADXL345_ADDRESS_ALT_LOW     0x53 // alt address pin low (GND)
 #define ADXL345_ADDRESS_ALT_HIGH    0x1D // alt address pin high (VCC)
@@ -142,9 +143,11 @@
 #define SCL_PIN 19
 
 int adxl345I2CAddress;
+static char tag[] = "i2cscanner";
 
 void initI2C();
 void initADXL345();
+void task_i2cscanner(void *ignore);
 uint8_t getDeviceID();
 void getAcceleration(int16_t* x, int16_t* y, int16_t* z);
 int16_t getAccelerationX();

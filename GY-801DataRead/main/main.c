@@ -1,3 +1,4 @@
+#include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "esp_wifi.h"
 #include "esp_system.h"
@@ -7,75 +8,61 @@
 #include "driver/gpio.h"
 #include <esp_log.h>
 #include "ADXL345.h"
-
-static char tag[] = "i2cscanner";
-
-void task_i2cscanner(void *ignore) {
-	ESP_LOGD(tag, ">> i2cScanner");
-	i2c_config_t conf;
-	conf.mode = I2C_MODE_MASTER;
-	conf.sda_io_num = SDA_PIN;
-	conf.scl_io_num = SCL_PIN;
-	conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
-	conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-	conf.master.clk_speed = 100000;
-	i2c_param_config(I2C_NUM_0, &conf);
-
-	i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, 0, 0, 0);
-
-	int i;
-	esp_err_t espRc;
-	printf("     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f\n");
-	printf("00:         ");
-	for (i=3; i< 0x78; i++) {
-		i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-		i2c_master_start(cmd);
-		i2c_master_write_byte(cmd, (i << 1) | I2C_MASTER_WRITE, 1 /* expect ack */);
-		i2c_master_stop(cmd);
-
-		espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_PERIOD_MS);
-		if (i%16 == 0) {
-			printf("\n%.2x:", i);
-		}
-		if (espRc == 0) {
-			printf(" %.2x", i);
-		} else {
-			printf(" --");
-		}
-		//ESP_LOGD(tag, "i=%d, rc=%d (0x%x)", i, espRc, espRc);
-		i2c_cmd_link_delete(cmd);
-	}
-	printf("\n");
-	vTaskDelete(NULL);
-}
+#include "driver/i2c.h"
 
 esp_err_t event_handler(void *ctx, system_event_t *event)
 {
     return ESP_OK;
 }
 
+// this is the task in which the accelration measurements are performed
+void vAccelerometerTask(void *pvParameters)
+{
+	TickType_t tElapsedTicks;
+	TickType_t tLastTimeCall;
+	TickType_t tSamplingTime = pdMS_TO_TICKS(1);
+	bool bEnableMeas = true;
+	int16_t x, y, z;
+	//initialize the i2c comm
+	initI2C();
+	//initialize the accelerometer
+	initADXL345();
+	printf("Accelerometer ID: %u\r\n", i2cReadByte(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_DEVID));
+	printf("PWR reg val: %u\r\n", i2cReadByte(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_POWER_CTL));
+	printf("BW_RATE reg: %u\r\n", i2cReadByte(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_BW_RATE));
+	tLastTimeCall = xTaskGetTickCount(); //get the tick count since the execution of the programm
+	while (1)
+	{
+		if (bEnableMeas)
+			{
+				getAcceleration(&x,&y,&z);
+				tElapsedTicks = xTaskGetTickCount();
+				printf("Time: %d;X: %5.2f; Y: %5.2f; Z: %5.2f;\r\n", tElapsedTicks * portTICK_RATE_MS, (double)(x)/256, (double)(y)/256, (double)(z)/256);
+			}
+		vTaskDelayUntil(&tLastTimeCall, tSamplingTime);
+	}
+
+}
+
 void app_main(void)
 {
     nvs_flash_init();
-    //task_i2cscanner(NULL);
-    initI2C();
-    initADXL345();
-    printf("Accelerometer ID: %u\r\n", i2cReadByte(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_DEVID));
-    printf("PWR reg val: %u\r\n", i2cReadByte(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_POWER_CTL));
-    printf("BW_RATE reg: %u\r\n", i2cReadByte(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_BW_RATE));
-
-    unsigned int x = 0;
-    while (true) {
+    ESP_LOGD("Main","Execution period is %d\r\n",portTICK_RATE_MS);
+    //start the execution
+    xTaskCreate(&vAccelerometerTask,"AccelerometerTask", 10000, NULL, 5,NULL);
+//sda
+    //unsigned int x = 0;
+    //while (true) {
     	//printf("Running app:%u\r\n", x++);
     	//printf("X: %5.2f\r\n", (double)getAccelerationX()/256);
-    	int16_t x, y, z;
-    	getAcceleration(&x,&y,&z);
-    	printf("X: %5.2f; Y: %5.2f; Z: %5.2f;\r\n", (double)(x)/256, (double)(y)/256, (double)(z)/256);
+    	//int16_t x, y, z;
+    	//getAcceleration(&x,&y,&z);
+
     	//printf("PWR reg val: %u\r\n", i2cReadByte(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_POWER_CTL));
     	//i2cWriteByte(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_POWER_CTL, 0x8);
     	//i2cWiteBit(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_POWER_CTL, ADXL345_PCTL_MEASURE_BIT, 1 );
     	//printf("PWR reg val after write %u\r\n", i2cReadByte(ADXL345_DEFAULT_ADDRESS, ADXL345_RA_POWER_CTL));
-        vTaskDelay(pdMS_TO_TICKS(10));
-    }
+        //vTaskDelay(pdMS_TO_TICKS(10));
+    //}
 }
 
