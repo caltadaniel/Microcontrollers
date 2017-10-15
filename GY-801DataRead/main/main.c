@@ -7,11 +7,13 @@
 #include "esp_event_loop.h"
 #include "nvs_flash.h"
 #include "driver/gpio.h"
+#include <lwip/sockets.h>
 #include <esp_log.h>
 #include "ADXL345.h"
 #include "driver/i2c.h"
 
 #define BUFFERLENGTH 1000
+#define PORT_NUMBER 8001
 
 struct accelData {
    TickType_t  time[BUFFERLENGTH];
@@ -30,12 +32,43 @@ esp_err_t event_handler(void *ctx, system_event_t *event)
     return ESP_OK;
 }
 
+void vSetupTCP()
+{
+	tcpip_adapter_init();
+	ESP_ERROR_CHECK( esp_event_loop_init(event_handler, NULL) );
+	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+	ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
+	ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
+	ESP_ERROR_CHECK( esp_wifi_set_mode(WIFI_MODE_STA) );
+	wifi_config_t sta_config = {
+		.sta = {
+			.ssid = "TP-LINK_POCKET_3020_79D6BA",
+			.password = "22383358",
+			.bssid_set = false
+		}
+	};
+	ESP_ERROR_CHECK( esp_wifi_set_config(WIFI_IF_STA, &sta_config) );
+	ESP_ERROR_CHECK( esp_wifi_start() );
+	ESP_ERROR_CHECK( esp_wifi_connect() );
+}
+
 void vPrintData(TickType_t *timeBuffer, int16_t *xBuffer)
 {
 	printf("New dataset received\r\n");
 	for (int i = 0; i < BUFFERLENGTH; i++) {
 		printf("Time: %d, xAccel: %d\r\n", *(timeBuffer + i), *(xBuffer + i));
 	}
+}
+
+void vPrintData1(struct accelData *data)
+{
+	printf("New dataset received\r\n");
+	char dataString[] = "";
+	for (int i = 0; i < BUFFERLENGTH; i++) {
+		//printf("Time: %d, xAccel: %d\r\n", *(timeBuffer + i), *(xBuffer + i));
+		sprintf(dataString, "%d, %d, %d, %d\r\n", (*data).time[i], (*data).xData[i], (*data).yData[i], (*data).zData[i]);
+	}
+	printf(dataString);
 }
 
 //this is the task that takes care of the communication aspect
@@ -58,7 +91,7 @@ void vCommunicationTask(void *pvParameters)
 			switch (xStatus) {
 			case pdPASS:
 				ESP_LOGD("Communication", "Received array from time measurement");
-				//vPrintData(sData.time, sData.xData);
+				vPrintData1(&sData);
 				break;
 			default:
 				//ESP_LOGD("Communication", "Data not available");
@@ -105,6 +138,8 @@ void vAccelerometerTask(void *pvParameters)
 				getAcceleration(&x,&y,&z);
 				tElapsedTicks = xTaskGetTickCount();
 				*(sData.xData + index) = x;
+				*(sData.yData + index) = y;
+				*(sData.zData + index) = z;
 				*(sData.time + index) = tElapsedTicks;
 				//printf("Time: %d;X: %5.2f; Y: %5.2f; Z: %5.2f;\r\n", tElapsedTicks * portTICK_RATE_MS, (double)(x)/256, (double)(y)/256, (double)(z)/256);
 				index += 1;
