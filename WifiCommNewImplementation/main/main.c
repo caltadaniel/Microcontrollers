@@ -101,7 +101,7 @@ void socket_server(void *ignore) {
 				vTaskDelay(pdMS_TO_TICKS(5));
 				int totalLenght=0;
 				unsigned char packetLength[4];
-				convertULongToArray(5,packetLength);
+				convertULongToArray(4,packetLength);
 				printCharArray(packetLength, 4);
 				//prepare the message
 				char *message = malloc(PACKETSIZE);
