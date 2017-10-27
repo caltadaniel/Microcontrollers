@@ -85,6 +85,11 @@ void socket_server(void *ignore) {
 		// We now have a new client ...
 		int total =	10*1024;
 		int sizeUsed = 0;
+		int integerArray[1000];//prepare the array of short
+		for	(int i=0; i<1000; i++)
+		{
+			integerArray[i]=i;
+		}
 		char *data = malloc(total);
 		ssize_t sizeRead;
 		// Loop reading data.
@@ -101,27 +106,30 @@ void socket_server(void *ignore) {
 				vTaskDelay(pdMS_TO_TICKS(5));
 				int totalLenght=0;
 				unsigned char packetLength[4];
-				convertULongToArray(4,packetLength);
+				//convertULongToArray(4,packetLength);
+				convertULongToArray(sizeof(int)*1000,packetLength);
 				printCharArray(packetLength, 4);
 				//prepare the message
-				char *message = malloc(PACKETSIZE);
+				char *message = malloc(4 + 2 + sizeof(int)*1000);
 				memcpy(message, packetLength,sizeof(packetLength));
 				totalLenght = totalLenght+sizeof(packetLength);
-
 				unsigned char dataType[2];
-				convertUIntToArray(3,dataType);
-				printCharArray(dataType, 2);
+				//convertUIntToArray(3,dataType);
+				convertUIntToArray(4,dataType);
+				//printCharArray(dataType, 2);
 				memcpy(message+sizeof(packetLength),dataType,sizeof(dataType));
 				totalLenght = totalLenght+sizeof(dataType);
-				printCharArray((void*)message, totalLenght);
-				convertUIntToArray(12,dataType);
+				//printCharArray((void*)message, totalLenght);
+				//convertUIntToArray(12,dataType);
+				//now append the data array
+				//memcpy(message+sizeof(packetLength)+sizeof(dataType),dataType,sizeof(dataType));
+				memcpy(message+sizeof(packetLength)+sizeof(dataType),integerArray,sizeof(integerArray));
+				totalLenght = totalLenght+sizeof(integerArray);
 
-				memcpy(message+sizeof(packetLength)+sizeof(dataType),dataType,sizeof(dataType));
-				totalLenght = totalLenght+sizeof(dataType);
-				printCharArray((void*)message, totalLenght);
-
-				printf("TotalLength %d\n", totalLenght);
 				int transm = send(clientSock, message, totalLenght ,0);
+
+				//printCharArray((void*)message, totalLenght);
+				printf("TotalLength %d\n", totalLenght);
 				printf("Data transmitted: %d\n",transm);
 				//int transm = send(clientSock, data, sizeRead ,0);
 
@@ -166,7 +174,7 @@ void app_main(void)
     ESP_ERROR_CHECK( esp_wifi_set_config(WIFI_IF_STA, &sta_config) );
     ESP_ERROR_CHECK( esp_wifi_start() );
     ESP_ERROR_CHECK( esp_wifi_connect() );
-    xTaskCreate(&socket_server, "tcp_conn", 4096, NULL, 5, NULL);
+    xTaskCreate(&socket_server, "tcp_conn", 10000, NULL, 5, NULL);
     while (true) {
     }
 }
