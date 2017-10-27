@@ -72,7 +72,11 @@ void socket_server(void *ignore) {
 		ESP_LOGE(tag, "listen: %d %s", rc, strerror(errno));
 		goto END;
 	}
-
+	int integerArray[1000];//prepare the array of short
+	for	(int i=0; i<1000; i++)
+	{
+		integerArray[i]=i;
+	}
 	while (1) {
 		// Listen for a new client connection.
 		socklen_t clientAddressLength = sizeof(clientAddress);
@@ -85,24 +89,22 @@ void socket_server(void *ignore) {
 		// We now have a new client ...
 		int total =	10*1024;
 		int sizeUsed = 0;
-		int integerArray[1000];//prepare the array of short
-		for	(int i=0; i<1000; i++)
-		{
-			integerArray[i]=i;
-		}
+
 		char *data = malloc(total);
+		char *message = malloc(4 + 2 + sizeof(int)*1000);
 		ssize_t sizeRead;
 		// Loop reading data.
 		while(1) {
-			sizeRead = recv(clientSock, data + sizeUsed, total-sizeUsed, 0);
-			if (sizeRead < 0) {
-
-				ESP_LOGE(tag, "recv: %d %s", sizeRead, strerror(errno));
-				goto END;
-			}
-			if (sizeRead > 0)
+//			sizeRead = recv(clientSock, data + sizeUsed, total-sizeUsed, 0);
+//			if (sizeRead < 0) {
+//
+//				ESP_LOGE(tag, "recv: %d %s", sizeRead, strerror(errno));
+//				goto END;
+//			}
+			//if (sizeRead > 0)
+			if (true)
 			{
-				printf("Data read (size: %d) was: %.*s\n", sizeUsed + sizeRead, sizeUsed+ sizeRead, data);
+				//printf("Data read (size: %d) was: %.*s\n", sizeUsed + sizeRead, sizeUsed+ sizeRead, data);
 				vTaskDelay(pdMS_TO_TICKS(5));
 				int totalLenght=0;
 				unsigned char packetLength[4];
@@ -110,7 +112,7 @@ void socket_server(void *ignore) {
 				convertULongToArray(sizeof(int)*1000,packetLength);
 				printCharArray(packetLength, 4);
 				//prepare the message
-				char *message = malloc(4 + 2 + sizeof(int)*1000);
+
 				memcpy(message, packetLength,sizeof(packetLength));
 				totalLenght = totalLenght+sizeof(packetLength);
 				unsigned char dataType[2];
@@ -132,21 +134,19 @@ void socket_server(void *ignore) {
 				printf("TotalLength %d\n", totalLenght);
 				printf("Data transmitted: %d\n",transm);
 				//int transm = send(clientSock, data, sizeRead ,0);
-
-
-				vTaskDelay(pdMS_TO_TICKS(1));
+				vTaskDelay(pdMS_TO_TICKS(10));
 				break;
 			}
 			if (sizeRead == 0) {
 				break;
 			}
-			sizeUsed += sizeRead;
+			//sizeUsed += sizeRead;
 		}
 
 		// Finished reading data.
 		ESP_LOGD(tag, "Data read (size: %d) was: %.*s", sizeUsed, sizeUsed, data);
 		printf("Data read (size: %d) was: %.*s\n", sizeUsed, sizeUsed, data);
-
+		free(message);
 		free(data);
 		close(clientSock);
 	}
@@ -174,7 +174,7 @@ void app_main(void)
     ESP_ERROR_CHECK( esp_wifi_set_config(WIFI_IF_STA, &sta_config) );
     ESP_ERROR_CHECK( esp_wifi_start() );
     ESP_ERROR_CHECK( esp_wifi_connect() );
-    xTaskCreate(&socket_server, "tcp_conn", 10000, NULL, 5, NULL);
+    xTaskCreate(&socket_server, "tcp_conn", 20000, NULL, 5, NULL);
     while (true) {
     }
 }
