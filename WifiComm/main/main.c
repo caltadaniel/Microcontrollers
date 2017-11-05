@@ -86,7 +86,7 @@ void socket_server(void *ignore) {
 		}
 
 		// Finished reading data.
-		ESP_LOGD(tag, "Data read (size: %d) was: %.*s", sizeUsed, sizeUsed, data);
+		ESP_LOGD(tag, "dData read (size: %d) was: %.*s", sizeUsed, sizeUsed, data);
 		printf("Data read (size: %d) was: %.*s\n", sizeUsed, sizeUsed, data);
 
 		free(data);
