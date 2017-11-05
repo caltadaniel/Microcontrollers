@@ -237,6 +237,8 @@ void vContinuousTask(void *pvParameters)
 	bool enableSend = false;
 	int sampleToCollect = N;
 	int sampleCount = 0;
+	char lineBuffer[6];
+	char *message = malloc(10000);
 	struct mg_connection *nc;
 	TickType_t exitIdleTime = 0;
 	//allocate the input buffer
@@ -323,10 +325,20 @@ void vContinuousTask(void *pvParameters)
 					for (i=0; i<sampleToCollect/2; i++) {
 						printf("%d\n",real[i]);
 					}
+					int msgLen = 0;
+					for (i = 0; i < sampleToCollect/2; i++) {
+						int stringLength = sprintf(lineBuffer, "%d, ",real[i]);
+						memcpy(message + msgLen, lineBuffer, stringLength);
+						msgLen += stringLength;
+						//printf("LineBuffer data %s, length %d\n", lineBuffer,position);
+					}
+					message[msgLen] = '\n';
+					msgLen+=1;
+
 					char number[100];
 					int size = sprintf(number, "Sending Time: %d", xTaskGetTickCount());
 					mg_mqtt_publish(nc, "/FFT/Accel1", 65, MG_MQTT_QOS(0), number,size);
-					mg_mqtt_publish(nc, "/FFT/Accel1", 65, MG_MQTT_QOS(0), real,sizeof(short)*sampleToCollect);
+					mg_mqtt_publish(nc, "/FFT/Accel1", 65, MG_MQTT_QOS(0), message,msgLen);
 					ESP_LOGD("Acelerometer", "Sending data %.*s", size, number);
 					mainState = STOPPING;
 				}
