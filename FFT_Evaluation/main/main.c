@@ -18,18 +18,11 @@
 #define mainDelayLoopCount  10000
 #define TIMER_DIVIDER         16  // Hardware timer clock divider, 80 to get 1MHz clock to timer */
 #define TIMER_SCALE           (TIMER_BASE_CLK / TIMER_DIVIDER)  // convert counter value to seconds
-//#define TIMER_INTERVAL0_SEC   (0.00005) // sample time in seconds
 #define TIMER_INTERVAL0_SEC   (0.0001) // sample time in seconds
 #define SINE_AMPLITUDE 		10
 #define SINE_PERIOD			0.001 //period in seconds
 #define log2N     10
 #define N         1024     //number of sample points
-
-typedef struct
-{
-	int16_t eDataID;
-	int32_t lDataValue;
-} Data_t;
 
 typedef	enum
 {
@@ -79,7 +72,7 @@ void IRAM_ATTR timer_group0_isr(void *para)
         		0.5*sin(2*3.14*executionCount*((double)TIMER_INTERVAL0_SEC/0.01)))*16384)+16384;
         //short computedValue = (short) executionCount;
         //add the value on the queue;
-        BaseType_t result = xQueueSendFromISR(globalQueue1, &computedValue, NULL);
+        xQueueSendFromISR(globalQueue1, &computedValue, NULL);
         executionCount +=1;
     } else {
         ;
@@ -88,9 +81,6 @@ void IRAM_ATTR timer_group0_isr(void *para)
     /* After the alarm has been triggered
       we need enable it again, so it is triggered the next time */
     TIMERG0.hw_timer[timer_idx].config.alarm_en = TIMER_ALARM_EN;
-
-    /* Now just send the event data back to the main program task */
-    //xQueueSendFromISR(timer_queue, &evt, NULL);
 }
 
 /*
@@ -130,17 +120,21 @@ void vContinuousTask(void *pvParameters)
 {
 	int sampleToCollect = N;
 	int sampleCount = 0;
+	TickType_t exitIdleTime = 0;
 	//allocate the input buffer
 	short *inputBuffer = malloc(sampleToCollect*sizeof(short));
 	real = malloc(sampleToCollect*sizeof(short));
 	imag = malloc(sampleToCollect*sizeof(short));
+	short i;
 	mainState = IDLE;
 	while(1)
 	{
 		switch (mainState) {
 			case IDLE:
 				sampleCount = 0;
+				timer_start(TIMER_GROUP_0, 0);
 				mainState = COLLECTSAMPLE;
+				exitIdleTime = xTaskGetTickCount();
 				break;
 			case COLLECTSAMPLE:
 			{
@@ -169,20 +163,22 @@ void vContinuousTask(void *pvParameters)
 //					printf("%d, %d\n",i, (short)inputBuffer[i]);
 //				}
 				{
-				short i;
+				timer_pause(TIMER_GROUP_0, 0);
+				//ESP_LOGD("machineState","Total sampling time %d", xTaskGetTickCount() - exitIdleTime);
 				for( i=0; i<sampleToCollect; i++) imag[i] = 0;   // clear imag array
 				memcpy(real, inputBuffer, sizeof(short)*sampleToCollect);
 				TickType_t start = xTaskGetTickCount();
 				fix_fft(real, imag, (short)log2(sampleToCollect), 0);
-				ESP_LOGD("machineState","FFT execution time %d", xTaskGetTickCount() - start);
-//				for ( i = 0; i < N/2; i++)         //get the power magnitude in each bin
-//				{
-//				  real[i] =sqrt((long)real[i] * (long)real[i] + (long)imag[i] * (long)imag[i]);
-//				}
-//				printf("*\n");      //send fft results over serial to PC
-//				for (i=0; i<sampleToCollect/2; i++) {
-//					printf("%d\n",real[i]);
-//				}
+				//ESP_LOGD("machineState","FFT execution time %d", xTaskGetTickCount() - start);
+				//ESP_LOGD("machineState", "waiting messages: %d", uxQueueMessagesWaiting(globalQueue1))
+				for ( i = 0; i < N/2; i++)         //get the power magnitude in each bin
+				{
+				  real[i] =sqrt((long)real[i] * (long)real[i] + (long)imag[i] * (long)imag[i]);
+				}
+				printf("*\n");      //send fft results over serial to PC
+				for (i=0; i<sampleToCollect/2; i++) {
+					printf("%d\n",real[i]);
+				}
 				mainState = STOPPING;
 				break;
 				}
@@ -209,7 +205,7 @@ void app_main(void)
     if (globalQueue1 != NULL)
     {
     	printf("Different from null");
-    	xTaskCreate(&vContinuousTask, "TaskCont", 100000,NULL,5,NULL);
+    	xTaskCreate(&vContinuousTask, "TaskCont", 20000,NULL,5,NULL);
     }
 }
 
