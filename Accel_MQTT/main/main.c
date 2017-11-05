@@ -465,6 +465,7 @@ int app_main(void) {
 	nvs_flash_init();
 	tcpip_adapter_init();
 	executionCount = 0;
+
 	globalQueue1 = xQueueCreate(1000, sizeof(short)); //this is for int16
 	globalQueueIncomingMessages = xQueueCreate(100, sizeof(Data_t));
 	ESP_ERROR_CHECK( esp_event_loop_init(wifi_event_handler, NULL));
