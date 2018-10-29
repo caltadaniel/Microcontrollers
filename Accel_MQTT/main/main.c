@@ -321,10 +321,10 @@ void vContinuousTask(void *pvParameters)
 					{
 					  real[i] =sqrt((long)real[i] * (long)real[i] + (long)imag[i] * (long)imag[i]);
 					}
-					printf("*\n");      //send fft results over serial to PC
-					for (i=0; i<sampleToCollect/2; i++) {
-						printf("%d\n",real[i]);
-					}
+					//printf("*\n");      //send fft results over serial to PC
+//					for (i=0; i<sampleToCollect/2; i++) {
+//						printf("%d\n",real[i]);
+//					}
 					int msgLen = 0;
 					for (i = 0; i < sampleToCollect/2; i++) {
 						int stringLength = sprintf(lineBuffer, "%d, ",real[i]);

@@ -1,0 +1,1642 @@
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"main.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.MX_GPIO_Init,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv4-sp-d16
+  24              	MX_GPIO_Init:
+  25              	.LFB137:
+  26              		.file 1 "Src/main.c"
+   1:Src/main.c    **** 
+   2:Src/main.c    **** /**
+   3:Src/main.c    ****   ******************************************************************************
+   4:Src/main.c    ****   * @file           : main.c
+   5:Src/main.c    ****   * @brief          : Main program body
+   6:Src/main.c    ****   ******************************************************************************
+   7:Src/main.c    ****   * This notice applies to any and all portions of this file
+   8:Src/main.c    ****   * that are not between comment pairs USER CODE BEGIN and
+   9:Src/main.c    ****   * USER CODE END. Other portions of this file, whether 
+  10:Src/main.c    ****   * inserted by the user or by software development tools
+  11:Src/main.c    ****   * are owned by their respective copyright owners.
+  12:Src/main.c    ****   *
+  13:Src/main.c    ****   * Copyright (c) 2018 STMicroelectronics International N.V. 
+  14:Src/main.c    ****   * All rights reserved.
+  15:Src/main.c    ****   *
+  16:Src/main.c    ****   * Redistribution and use in source and binary forms, with or without 
+  17:Src/main.c    ****   * modification, are permitted, provided that the following conditions are met:
+  18:Src/main.c    ****   *
+  19:Src/main.c    ****   * 1. Redistribution of source code must retain the above copyright notice, 
+  20:Src/main.c    ****   *    this list of conditions and the following disclaimer.
+  21:Src/main.c    ****   * 2. Redistributions in binary form must reproduce the above copyright notice,
+  22:Src/main.c    ****   *    this list of conditions and the following disclaimer in the documentation
+  23:Src/main.c    ****   *    and/or other materials provided with the distribution.
+  24:Src/main.c    ****   * 3. Neither the name of STMicroelectronics nor the names of other 
+  25:Src/main.c    ****   *    contributors to this software may be used to endorse or promote products 
+  26:Src/main.c    ****   *    derived from this software without specific written permission.
+  27:Src/main.c    ****   * 4. This software, including modifications and/or derivative works of this 
+  28:Src/main.c    ****   *    software, must execute solely and exclusively on microcontroller or
+  29:Src/main.c    ****   *    microprocessor devices manufactured by or for STMicroelectronics.
+  30:Src/main.c    ****   * 5. Redistribution and use of this software other than as permitted under 
+  31:Src/main.c    ****   *    this license is void and will automatically terminate your rights under 
+  32:Src/main.c    ****   *    this license. 
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 2
+
+
+  33:Src/main.c    ****   *
+  34:Src/main.c    ****   * THIS SOFTWARE IS PROVIDED BY STMICROELECTRONICS AND CONTRIBUTORS "AS IS" 
+  35:Src/main.c    ****   * AND ANY EXPRESS, IMPLIED OR STATUTORY WARRANTIES, INCLUDING, BUT NOT 
+  36:Src/main.c    ****   * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+  37:Src/main.c    ****   * PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY INTELLECTUAL PROPERTY
+  38:Src/main.c    ****   * RIGHTS ARE DISCLAIMED TO THE FULLEST EXTENT PERMITTED BY LAW. IN NO EVENT 
+  39:Src/main.c    ****   * SHALL STMICROELECTRONICS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  40:Src/main.c    ****   * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  41:Src/main.c    ****   * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+  42:Src/main.c    ****   * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+  43:Src/main.c    ****   * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+  44:Src/main.c    ****   * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  45:Src/main.c    ****   * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  46:Src/main.c    ****   *
+  47:Src/main.c    ****   ******************************************************************************
+  48:Src/main.c    ****   */
+  49:Src/main.c    **** /* Includes ------------------------------------------------------------------*/
+  50:Src/main.c    **** #include "main.h"
+  51:Src/main.c    **** #include "stm32f4xx_hal.h"
+  52:Src/main.c    **** #include "cmsis_os.h"
+  53:Src/main.c    **** #include "usb_device.h"
+  54:Src/main.c    **** 
+  55:Src/main.c    **** /* USER CODE BEGIN Includes */
+  56:Src/main.c    **** #include "usbd_cdc_if.h"
+  57:Src/main.c    **** 
+  58:Src/main.c    **** /* USER CODE END Includes */
+  59:Src/main.c    **** 
+  60:Src/main.c    **** /* Private variables ---------------------------------------------------------*/
+  61:Src/main.c    **** I2C_HandleTypeDef hi2c1;
+  62:Src/main.c    **** 
+  63:Src/main.c    **** I2S_HandleTypeDef hi2s2;
+  64:Src/main.c    **** I2S_HandleTypeDef hi2s3;
+  65:Src/main.c    **** 
+  66:Src/main.c    **** SPI_HandleTypeDef hspi1;
+  67:Src/main.c    **** 
+  68:Src/main.c    **** osThreadId defaultTaskHandle;
+  69:Src/main.c    **** osThreadId continuousTaskHandle;
+  70:Src/main.c    **** 
+  71:Src/main.c    **** /* USER CODE BEGIN PV */
+  72:Src/main.c    **** /* Private variables ---------------------------------------------------------*/
+  73:Src/main.c    **** 
+  74:Src/main.c    **** /* USER CODE END PV */
+  75:Src/main.c    **** 
+  76:Src/main.c    **** /* Private function prototypes -----------------------------------------------*/
+  77:Src/main.c    **** void SystemClock_Config(void);
+  78:Src/main.c    **** static void MX_GPIO_Init(void);
+  79:Src/main.c    **** static void MX_I2C1_Init(void);
+  80:Src/main.c    **** static void MX_I2S2_Init(void);
+  81:Src/main.c    **** static void MX_I2S3_Init(void);
+  82:Src/main.c    **** static void MX_SPI1_Init(void);
+  83:Src/main.c    **** void StartDefaultTask(void const * argument);
+  84:Src/main.c    **** void StartContinuousTask(void const * argument);
+  85:Src/main.c    **** 
+  86:Src/main.c    **** /* USER CODE BEGIN PFP */
+  87:Src/main.c    **** /* Private function prototypes -----------------------------------------------*/
+  88:Src/main.c    **** 
+  89:Src/main.c    **** /* USER CODE END PFP */
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 3
+
+
+  90:Src/main.c    **** 
+  91:Src/main.c    **** /* USER CODE BEGIN 0 */
+  92:Src/main.c    **** 
+  93:Src/main.c    **** /* USER CODE END 0 */
+  94:Src/main.c    **** 
+  95:Src/main.c    **** /**
+  96:Src/main.c    ****   * @brief  The application entry point.
+  97:Src/main.c    ****   *
+  98:Src/main.c    ****   * @retval None
+  99:Src/main.c    ****   */
+ 100:Src/main.c    **** int main(void)
+ 101:Src/main.c    **** {
+ 102:Src/main.c    ****   /* USER CODE BEGIN 1 */
+ 103:Src/main.c    **** 
+ 104:Src/main.c    ****   /* USER CODE END 1 */
+ 105:Src/main.c    **** 
+ 106:Src/main.c    ****   /* MCU Configuration----------------------------------------------------------*/
+ 107:Src/main.c    **** 
+ 108:Src/main.c    ****   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+ 109:Src/main.c    ****   HAL_Init();
+ 110:Src/main.c    **** 
+ 111:Src/main.c    ****   /* USER CODE BEGIN Init */
+ 112:Src/main.c    **** 
+ 113:Src/main.c    ****   /* USER CODE END Init */
+ 114:Src/main.c    **** 
+ 115:Src/main.c    ****   /* Configure the system clock */
+ 116:Src/main.c    ****   SystemClock_Config();
+ 117:Src/main.c    **** 
+ 118:Src/main.c    ****   /* USER CODE BEGIN SysInit */
+ 119:Src/main.c    **** 
+ 120:Src/main.c    ****   /* USER CODE END SysInit */
+ 121:Src/main.c    **** 
+ 122:Src/main.c    ****   /* Initialize all configured peripherals */
+ 123:Src/main.c    ****   MX_GPIO_Init();
+ 124:Src/main.c    ****   MX_I2C1_Init();
+ 125:Src/main.c    ****   MX_I2S2_Init();
+ 126:Src/main.c    ****   MX_I2S3_Init();
+ 127:Src/main.c    ****   MX_SPI1_Init();
+ 128:Src/main.c    ****   /* USER CODE BEGIN 2 */
+ 129:Src/main.c    **** 
+ 130:Src/main.c    ****   /* USER CODE END 2 */
+ 131:Src/main.c    **** 
+ 132:Src/main.c    ****   /* USER CODE BEGIN RTOS_MUTEX */
+ 133:Src/main.c    ****   /* add mutexes, ... */
+ 134:Src/main.c    ****   /* USER CODE END RTOS_MUTEX */
+ 135:Src/main.c    **** 
+ 136:Src/main.c    ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+ 137:Src/main.c    ****   /* add semaphores, ... */
+ 138:Src/main.c    ****   /* USER CODE END RTOS_SEMAPHORES */
+ 139:Src/main.c    **** 
+ 140:Src/main.c    ****   /* USER CODE BEGIN RTOS_TIMERS */
+ 141:Src/main.c    ****   /* start timers, add new ones, ... */
+ 142:Src/main.c    ****   /* USER CODE END RTOS_TIMERS */
+ 143:Src/main.c    **** 
+ 144:Src/main.c    ****   /* Create the thread(s) */
+ 145:Src/main.c    ****   /* definition and creation of defaultTask */
+ 146:Src/main.c    ****   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 4
+
+
+ 147:Src/main.c    ****   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+ 148:Src/main.c    **** 
+ 149:Src/main.c    ****   /* definition and creation of continuousTask */
+ 150:Src/main.c    ****   osThreadDef(continuousTask, StartContinuousTask, osPriorityNormal, 0, 128);
+ 151:Src/main.c    ****   continuousTaskHandle = osThreadCreate(osThread(continuousTask), NULL);
+ 152:Src/main.c    **** 
+ 153:Src/main.c    ****   /* USER CODE BEGIN RTOS_THREADS */
+ 154:Src/main.c    ****   /* add threads, ... */
+ 155:Src/main.c    ****   /* USER CODE END RTOS_THREADS */
+ 156:Src/main.c    **** 
+ 157:Src/main.c    ****   /* USER CODE BEGIN RTOS_QUEUES */
+ 158:Src/main.c    ****   /* add queues, ... */
+ 159:Src/main.c    ****   /* USER CODE END RTOS_QUEUES */
+ 160:Src/main.c    ****  
+ 161:Src/main.c    **** 
+ 162:Src/main.c    ****   /* Start scheduler */
+ 163:Src/main.c    ****   osKernelStart();
+ 164:Src/main.c    ****   
+ 165:Src/main.c    ****   /* We should never get here as control is now taken by the scheduler */
+ 166:Src/main.c    **** 
+ 167:Src/main.c    ****   /* Infinite loop */
+ 168:Src/main.c    ****   /* USER CODE BEGIN WHILE */
+ 169:Src/main.c    ****   while (1)
+ 170:Src/main.c    ****   {
+ 171:Src/main.c    **** 
+ 172:Src/main.c    ****   /* USER CODE END WHILE */
+ 173:Src/main.c    **** 
+ 174:Src/main.c    ****   /* USER CODE BEGIN 3 */
+ 175:Src/main.c    **** 
+ 176:Src/main.c    ****   }
+ 177:Src/main.c    ****   /* USER CODE END 3 */
+ 178:Src/main.c    **** 
+ 179:Src/main.c    **** }
+ 180:Src/main.c    **** 
+ 181:Src/main.c    **** /**
+ 182:Src/main.c    ****   * @brief System Clock Configuration
+ 183:Src/main.c    ****   * @retval None
+ 184:Src/main.c    ****   */
+ 185:Src/main.c    **** void SystemClock_Config(void)
+ 186:Src/main.c    **** {
+ 187:Src/main.c    **** 
+ 188:Src/main.c    ****   RCC_OscInitTypeDef RCC_OscInitStruct;
+ 189:Src/main.c    ****   RCC_ClkInitTypeDef RCC_ClkInitStruct;
+ 190:Src/main.c    ****   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
+ 191:Src/main.c    **** 
+ 192:Src/main.c    ****     /**Configure the main internal regulator output voltage 
+ 193:Src/main.c    ****     */
+ 194:Src/main.c    ****   __HAL_RCC_PWR_CLK_ENABLE();
+ 195:Src/main.c    **** 
+ 196:Src/main.c    ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
+ 197:Src/main.c    **** 
+ 198:Src/main.c    ****     /**Initializes the CPU, AHB and APB busses clocks 
+ 199:Src/main.c    ****     */
+ 200:Src/main.c    ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+ 201:Src/main.c    ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+ 202:Src/main.c    ****   RCC_OscInitStruct.HSICalibrationValue = 16;
+ 203:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 5
+
+
+ 204:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+ 205:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLM = 8;
+ 206:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLN = 72;
+ 207:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 208:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLQ = 3;
+ 209:Src/main.c    ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 210:Src/main.c    ****   {
+ 211:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 212:Src/main.c    ****   }
+ 213:Src/main.c    **** 
+ 214:Src/main.c    ****     /**Initializes the CPU, AHB and APB busses clocks 
+ 215:Src/main.c    ****     */
+ 216:Src/main.c    ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+ 217:Src/main.c    ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 218:Src/main.c    ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 219:Src/main.c    ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 220:Src/main.c    ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+ 221:Src/main.c    ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 222:Src/main.c    **** 
+ 223:Src/main.c    ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+ 224:Src/main.c    ****   {
+ 225:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 226:Src/main.c    ****   }
+ 227:Src/main.c    **** 
+ 228:Src/main.c    ****   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_I2S;
+ 229:Src/main.c    ****   PeriphClkInitStruct.PLLI2S.PLLI2SN = 200;
+ 230:Src/main.c    ****   PeriphClkInitStruct.PLLI2S.PLLI2SM = 16;
+ 231:Src/main.c    ****   PeriphClkInitStruct.PLLI2S.PLLI2SR = 2;
+ 232:Src/main.c    ****   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+ 233:Src/main.c    ****   {
+ 234:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 235:Src/main.c    ****   }
+ 236:Src/main.c    **** 
+ 237:Src/main.c    ****     /**Configure the Systick interrupt time 
+ 238:Src/main.c    ****     */
+ 239:Src/main.c    ****   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+ 240:Src/main.c    **** 
+ 241:Src/main.c    ****     /**Configure the Systick 
+ 242:Src/main.c    ****     */
+ 243:Src/main.c    ****   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+ 244:Src/main.c    **** 
+ 245:Src/main.c    ****   /* SysTick_IRQn interrupt configuration */
+ 246:Src/main.c    ****   HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+ 247:Src/main.c    **** }
+ 248:Src/main.c    **** 
+ 249:Src/main.c    **** /* I2C1 init function */
+ 250:Src/main.c    **** static void MX_I2C1_Init(void)
+ 251:Src/main.c    **** {
+ 252:Src/main.c    **** 
+ 253:Src/main.c    ****   hi2c1.Instance = I2C1;
+ 254:Src/main.c    ****   hi2c1.Init.ClockSpeed = 100000;
+ 255:Src/main.c    ****   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+ 256:Src/main.c    ****   hi2c1.Init.OwnAddress1 = 0;
+ 257:Src/main.c    ****   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+ 258:Src/main.c    ****   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+ 259:Src/main.c    ****   hi2c1.Init.OwnAddress2 = 0;
+ 260:Src/main.c    ****   hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 6
+
+
+ 261:Src/main.c    ****   hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+ 262:Src/main.c    ****   if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+ 263:Src/main.c    ****   {
+ 264:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 265:Src/main.c    ****   }
+ 266:Src/main.c    **** 
+ 267:Src/main.c    **** }
+ 268:Src/main.c    **** 
+ 269:Src/main.c    **** /* I2S2 init function */
+ 270:Src/main.c    **** static void MX_I2S2_Init(void)
+ 271:Src/main.c    **** {
+ 272:Src/main.c    **** 
+ 273:Src/main.c    ****   hi2s2.Instance = SPI2;
+ 274:Src/main.c    ****   hi2s2.Init.Mode = I2S_MODE_MASTER_TX;
+ 275:Src/main.c    ****   hi2s2.Init.Standard = I2S_STANDARD_PHILIPS;
+ 276:Src/main.c    ****   hi2s2.Init.DataFormat = I2S_DATAFORMAT_16B;
+ 277:Src/main.c    ****   hi2s2.Init.MCLKOutput = I2S_MCLKOUTPUT_DISABLE;
+ 278:Src/main.c    ****   hi2s2.Init.AudioFreq = I2S_AUDIOFREQ_96K;
+ 279:Src/main.c    ****   hi2s2.Init.CPOL = I2S_CPOL_LOW;
+ 280:Src/main.c    ****   hi2s2.Init.ClockSource = I2S_CLOCK_PLL;
+ 281:Src/main.c    ****   hi2s2.Init.FullDuplexMode = I2S_FULLDUPLEXMODE_ENABLE;
+ 282:Src/main.c    ****   if (HAL_I2S_Init(&hi2s2) != HAL_OK)
+ 283:Src/main.c    ****   {
+ 284:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 285:Src/main.c    ****   }
+ 286:Src/main.c    **** 
+ 287:Src/main.c    **** }
+ 288:Src/main.c    **** 
+ 289:Src/main.c    **** /* I2S3 init function */
+ 290:Src/main.c    **** static void MX_I2S3_Init(void)
+ 291:Src/main.c    **** {
+ 292:Src/main.c    **** 
+ 293:Src/main.c    ****   hi2s3.Instance = SPI3;
+ 294:Src/main.c    ****   hi2s3.Init.Mode = I2S_MODE_MASTER_TX;
+ 295:Src/main.c    ****   hi2s3.Init.Standard = I2S_STANDARD_PHILIPS;
+ 296:Src/main.c    ****   hi2s3.Init.DataFormat = I2S_DATAFORMAT_16B;
+ 297:Src/main.c    ****   hi2s3.Init.MCLKOutput = I2S_MCLKOUTPUT_ENABLE;
+ 298:Src/main.c    ****   hi2s3.Init.AudioFreq = I2S_AUDIOFREQ_96K;
+ 299:Src/main.c    ****   hi2s3.Init.CPOL = I2S_CPOL_LOW;
+ 300:Src/main.c    ****   hi2s3.Init.ClockSource = I2S_CLOCK_PLL;
+ 301:Src/main.c    ****   hi2s3.Init.FullDuplexMode = I2S_FULLDUPLEXMODE_DISABLE;
+ 302:Src/main.c    ****   if (HAL_I2S_Init(&hi2s3) != HAL_OK)
+ 303:Src/main.c    ****   {
+ 304:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 305:Src/main.c    ****   }
+ 306:Src/main.c    **** 
+ 307:Src/main.c    **** }
+ 308:Src/main.c    **** 
+ 309:Src/main.c    **** /* SPI1 init function */
+ 310:Src/main.c    **** static void MX_SPI1_Init(void)
+ 311:Src/main.c    **** {
+ 312:Src/main.c    **** 
+ 313:Src/main.c    ****   /* SPI1 parameter configuration*/
+ 314:Src/main.c    ****   hspi1.Instance = SPI1;
+ 315:Src/main.c    ****   hspi1.Init.Mode = SPI_MODE_MASTER;
+ 316:Src/main.c    ****   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+ 317:Src/main.c    ****   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 7
+
+
+ 318:Src/main.c    ****   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+ 319:Src/main.c    ****   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+ 320:Src/main.c    ****   hspi1.Init.NSS = SPI_NSS_SOFT;
+ 321:Src/main.c    ****   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+ 322:Src/main.c    ****   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+ 323:Src/main.c    ****   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+ 324:Src/main.c    ****   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+ 325:Src/main.c    ****   hspi1.Init.CRCPolynomial = 10;
+ 326:Src/main.c    ****   if (HAL_SPI_Init(&hspi1) != HAL_OK)
+ 327:Src/main.c    ****   {
+ 328:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 329:Src/main.c    ****   }
+ 330:Src/main.c    **** 
+ 331:Src/main.c    **** }
+ 332:Src/main.c    **** 
+ 333:Src/main.c    **** /** Configure pins as 
+ 334:Src/main.c    ****         * Analog 
+ 335:Src/main.c    ****         * Input 
+ 336:Src/main.c    ****         * Output
+ 337:Src/main.c    ****         * EVENT_OUT
+ 338:Src/main.c    ****         * EXTI
+ 339:Src/main.c    **** */
+ 340:Src/main.c    **** static void MX_GPIO_Init(void)
+ 341:Src/main.c    **** {
+  27              		.loc 1 341 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 48
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 28
+  34              		.cfi_offset 4, -28
+  35              		.cfi_offset 5, -24
+  36              		.cfi_offset 6, -20
+  37              		.cfi_offset 7, -16
+  38              		.cfi_offset 8, -12
+  39              		.cfi_offset 9, -8
+  40              		.cfi_offset 14, -4
+  41 0004 8DB0     		sub	sp, sp, #52
+  42              	.LCFI1:
+  43              		.cfi_def_cfa_offset 80
+  44              	.LBB2:
+ 342:Src/main.c    **** 
+ 343:Src/main.c    ****   GPIO_InitTypeDef GPIO_InitStruct;
+ 344:Src/main.c    **** 
+ 345:Src/main.c    ****   /* GPIO Ports Clock Enable */
+ 346:Src/main.c    ****   __HAL_RCC_GPIOE_CLK_ENABLE();
+  45              		.loc 1 346 0
+  46 0006 0024     		movs	r4, #0
+  47 0008 0194     		str	r4, [sp, #4]
+  48 000a 494B     		ldr	r3, .L3
+  49 000c 1A6B     		ldr	r2, [r3, #48]
+  50 000e 42F01002 		orr	r2, r2, #16
+  51 0012 1A63     		str	r2, [r3, #48]
+  52 0014 1A6B     		ldr	r2, [r3, #48]
+  53 0016 02F01002 		and	r2, r2, #16
+  54 001a 0192     		str	r2, [sp, #4]
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 8
+
+
+  55 001c 019A     		ldr	r2, [sp, #4]
+  56              	.LBE2:
+  57              	.LBB3:
+ 347:Src/main.c    ****   __HAL_RCC_GPIOC_CLK_ENABLE();
+  58              		.loc 1 347 0
+  59 001e 0294     		str	r4, [sp, #8]
+  60 0020 1A6B     		ldr	r2, [r3, #48]
+  61 0022 42F00402 		orr	r2, r2, #4
+  62 0026 1A63     		str	r2, [r3, #48]
+  63 0028 1A6B     		ldr	r2, [r3, #48]
+  64 002a 02F00402 		and	r2, r2, #4
+  65 002e 0292     		str	r2, [sp, #8]
+  66 0030 029A     		ldr	r2, [sp, #8]
+  67              	.LBE3:
+  68              	.LBB4:
+ 348:Src/main.c    ****   __HAL_RCC_GPIOH_CLK_ENABLE();
+  69              		.loc 1 348 0
+  70 0032 0394     		str	r4, [sp, #12]
+  71 0034 1A6B     		ldr	r2, [r3, #48]
+  72 0036 42F08002 		orr	r2, r2, #128
+  73 003a 1A63     		str	r2, [r3, #48]
+  74 003c 1A6B     		ldr	r2, [r3, #48]
+  75 003e 02F08002 		and	r2, r2, #128
+  76 0042 0392     		str	r2, [sp, #12]
+  77 0044 039A     		ldr	r2, [sp, #12]
+  78              	.LBE4:
+  79              	.LBB5:
+ 349:Src/main.c    ****   __HAL_RCC_GPIOA_CLK_ENABLE();
+  80              		.loc 1 349 0
+  81 0046 0494     		str	r4, [sp, #16]
+  82 0048 1A6B     		ldr	r2, [r3, #48]
+  83 004a 42F00102 		orr	r2, r2, #1
+  84 004e 1A63     		str	r2, [r3, #48]
+  85 0050 1A6B     		ldr	r2, [r3, #48]
+  86 0052 02F00102 		and	r2, r2, #1
+  87 0056 0492     		str	r2, [sp, #16]
+  88 0058 049A     		ldr	r2, [sp, #16]
+  89              	.LBE5:
+  90              	.LBB6:
+ 350:Src/main.c    ****   __HAL_RCC_GPIOB_CLK_ENABLE();
+  91              		.loc 1 350 0
+  92 005a 0594     		str	r4, [sp, #20]
+  93 005c 1A6B     		ldr	r2, [r3, #48]
+  94 005e 42F00202 		orr	r2, r2, #2
+  95 0062 1A63     		str	r2, [r3, #48]
+  96 0064 1A6B     		ldr	r2, [r3, #48]
+  97 0066 02F00202 		and	r2, r2, #2
+  98 006a 0592     		str	r2, [sp, #20]
+  99 006c 059A     		ldr	r2, [sp, #20]
+ 100              	.LBE6:
+ 101              	.LBB7:
+ 351:Src/main.c    ****   __HAL_RCC_GPIOD_CLK_ENABLE();
+ 102              		.loc 1 351 0
+ 103 006e 0694     		str	r4, [sp, #24]
+ 104 0070 1A6B     		ldr	r2, [r3, #48]
+ 105 0072 42F00802 		orr	r2, r2, #8
+ 106 0076 1A63     		str	r2, [r3, #48]
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 9
+
+
+ 107 0078 1B6B     		ldr	r3, [r3, #48]
+ 108 007a 03F00803 		and	r3, r3, #8
+ 109 007e 0693     		str	r3, [sp, #24]
+ 110 0080 069B     		ldr	r3, [sp, #24]
+ 111              	.LBE7:
+ 352:Src/main.c    **** 
+ 353:Src/main.c    ****   /*Configure GPIO pin Output Level */
+ 354:Src/main.c    ****   HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
+ 112              		.loc 1 354 0
+ 113 0082 2C4E     		ldr	r6, .L3+4
+ 114 0084 2246     		mov	r2, r4
+ 115 0086 0821     		movs	r1, #8
+ 116 0088 3046     		mov	r0, r6
+ 117 008a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 118              	.LVL0:
+ 355:Src/main.c    **** 
+ 356:Src/main.c    ****   /*Configure GPIO pin Output Level */
+ 357:Src/main.c    ****   HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_SET);
+ 119              		.loc 1 357 0
+ 120 008e DFF8B090 		ldr	r9, .L3+16
+ 121 0092 0122     		movs	r2, #1
+ 122 0094 1146     		mov	r1, r2
+ 123 0096 4846     		mov	r0, r9
+ 124 0098 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 125              	.LVL1:
+ 358:Src/main.c    **** 
+ 359:Src/main.c    ****   /*Configure GPIO pin Output Level */
+ 360:Src/main.c    ****   HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin 
+ 126              		.loc 1 360 0
+ 127 009c 264F     		ldr	r7, .L3+8
+ 128 009e 2246     		mov	r2, r4
+ 129 00a0 4FF21001 		movw	r1, #61456
+ 130 00a4 3846     		mov	r0, r7
+ 131 00a6 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 132              	.LVL2:
+ 361:Src/main.c    ****                           |Audio_RST_Pin, GPIO_PIN_RESET);
+ 362:Src/main.c    **** 
+ 363:Src/main.c    ****   /*Configure GPIO pin : DATA_Ready_Pin */
+ 364:Src/main.c    ****   GPIO_InitStruct.Pin = DATA_Ready_Pin;
+ 133              		.loc 1 364 0
+ 134 00aa 0423     		movs	r3, #4
+ 135 00ac 0793     		str	r3, [sp, #28]
+ 365:Src/main.c    ****   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+ 136              		.loc 1 365 0
+ 137 00ae 0894     		str	r4, [sp, #32]
+ 366:Src/main.c    ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 138              		.loc 1 366 0
+ 139 00b0 0994     		str	r4, [sp, #36]
+ 367:Src/main.c    ****   HAL_GPIO_Init(DATA_Ready_GPIO_Port, &GPIO_InitStruct);
+ 140              		.loc 1 367 0
+ 141 00b2 07A9     		add	r1, sp, #28
+ 142 00b4 3046     		mov	r0, r6
+ 143 00b6 FFF7FEFF 		bl	HAL_GPIO_Init
+ 144              	.LVL3:
+ 368:Src/main.c    **** 
+ 369:Src/main.c    ****   /*Configure GPIO pin : CS_I2C_SPI_Pin */
+ 370:Src/main.c    ****   GPIO_InitStruct.Pin = CS_I2C_SPI_Pin;
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 10
+
+
+ 145              		.loc 1 370 0
+ 146 00ba 0823     		movs	r3, #8
+ 147 00bc 0793     		str	r3, [sp, #28]
+ 371:Src/main.c    ****   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+ 148              		.loc 1 371 0
+ 149 00be 0125     		movs	r5, #1
+ 150 00c0 0895     		str	r5, [sp, #32]
+ 372:Src/main.c    ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 151              		.loc 1 372 0
+ 152 00c2 0994     		str	r4, [sp, #36]
+ 373:Src/main.c    ****   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+ 153              		.loc 1 373 0
+ 154 00c4 0A94     		str	r4, [sp, #40]
+ 374:Src/main.c    ****   HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
+ 155              		.loc 1 374 0
+ 156 00c6 07A9     		add	r1, sp, #28
+ 157 00c8 3046     		mov	r0, r6
+ 158 00ca FFF7FEFF 		bl	HAL_GPIO_Init
+ 159              	.LVL4:
+ 375:Src/main.c    **** 
+ 376:Src/main.c    ****   /*Configure GPIO pins : INT1_Pin INT2_Pin MEMS_INT2_Pin */
+ 377:Src/main.c    ****   GPIO_InitStruct.Pin = INT1_Pin|INT2_Pin|MEMS_INT2_Pin;
+ 160              		.loc 1 377 0
+ 161 00ce 3223     		movs	r3, #50
+ 162 00d0 0793     		str	r3, [sp, #28]
+ 378:Src/main.c    ****   GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
+ 163              		.loc 1 378 0
+ 164 00d2 DFF87080 		ldr	r8, .L3+20
+ 165 00d6 CDF82080 		str	r8, [sp, #32]
+ 379:Src/main.c    ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 166              		.loc 1 379 0
+ 167 00da 0994     		str	r4, [sp, #36]
+ 380:Src/main.c    ****   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+ 168              		.loc 1 380 0
+ 169 00dc 07A9     		add	r1, sp, #28
+ 170 00de 3046     		mov	r0, r6
+ 171 00e0 FFF7FEFF 		bl	HAL_GPIO_Init
+ 172              	.LVL5:
+ 381:Src/main.c    **** 
+ 382:Src/main.c    ****   /*Configure GPIO pin : OTG_FS_PowerSwitchOn_Pin */
+ 383:Src/main.c    ****   GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin;
+ 173              		.loc 1 383 0
+ 174 00e4 0795     		str	r5, [sp, #28]
+ 384:Src/main.c    ****   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+ 175              		.loc 1 384 0
+ 176 00e6 0895     		str	r5, [sp, #32]
+ 385:Src/main.c    ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 177              		.loc 1 385 0
+ 178 00e8 0994     		str	r4, [sp, #36]
+ 386:Src/main.c    ****   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+ 179              		.loc 1 386 0
+ 180 00ea 0A94     		str	r4, [sp, #40]
+ 387:Src/main.c    ****   HAL_GPIO_Init(OTG_FS_PowerSwitchOn_GPIO_Port, &GPIO_InitStruct);
+ 181              		.loc 1 387 0
+ 182 00ec 07A9     		add	r1, sp, #28
+ 183 00ee 4846     		mov	r0, r9
+ 184 00f0 FFF7FEFF 		bl	HAL_GPIO_Init
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 11
+
+
+ 185              	.LVL6:
+ 388:Src/main.c    **** 
+ 389:Src/main.c    ****   /*Configure GPIO pin : PA0 */
+ 390:Src/main.c    ****   GPIO_InitStruct.Pin = GPIO_PIN_0;
+ 186              		.loc 1 390 0
+ 187 00f4 0795     		str	r5, [sp, #28]
+ 391:Src/main.c    ****   GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
+ 188              		.loc 1 391 0
+ 189 00f6 CDF82080 		str	r8, [sp, #32]
+ 392:Src/main.c    ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 190              		.loc 1 392 0
+ 191 00fa 0994     		str	r4, [sp, #36]
+ 393:Src/main.c    ****   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+ 192              		.loc 1 393 0
+ 193 00fc 07A9     		add	r1, sp, #28
+ 194 00fe 0F48     		ldr	r0, .L3+12
+ 195 0100 FFF7FEFF 		bl	HAL_GPIO_Init
+ 196              	.LVL7:
+ 394:Src/main.c    **** 
+ 395:Src/main.c    ****   /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin 
+ 396:Src/main.c    ****                            Audio_RST_Pin */
+ 397:Src/main.c    ****   GPIO_InitStruct.Pin = LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin 
+ 197              		.loc 1 397 0
+ 198 0104 4FF21003 		movw	r3, #61456
+ 199 0108 0793     		str	r3, [sp, #28]
+ 398:Src/main.c    ****                           |Audio_RST_Pin;
+ 399:Src/main.c    ****   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+ 200              		.loc 1 399 0
+ 201 010a 0895     		str	r5, [sp, #32]
+ 400:Src/main.c    ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 202              		.loc 1 400 0
+ 203 010c 0994     		str	r4, [sp, #36]
+ 401:Src/main.c    ****   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+ 204              		.loc 1 401 0
+ 205 010e 0A94     		str	r4, [sp, #40]
+ 402:Src/main.c    ****   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+ 206              		.loc 1 402 0
+ 207 0110 07A9     		add	r1, sp, #28
+ 208 0112 3846     		mov	r0, r7
+ 209 0114 FFF7FEFF 		bl	HAL_GPIO_Init
+ 210              	.LVL8:
+ 403:Src/main.c    **** 
+ 404:Src/main.c    ****   /*Configure GPIO pin : OTG_FS_OverCurrent_Pin */
+ 405:Src/main.c    ****   GPIO_InitStruct.Pin = OTG_FS_OverCurrent_Pin;
+ 211              		.loc 1 405 0
+ 212 0118 2023     		movs	r3, #32
+ 213 011a 0793     		str	r3, [sp, #28]
+ 406:Src/main.c    ****   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+ 214              		.loc 1 406 0
+ 215 011c 0894     		str	r4, [sp, #32]
+ 407:Src/main.c    ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 216              		.loc 1 407 0
+ 217 011e 0994     		str	r4, [sp, #36]
+ 408:Src/main.c    ****   HAL_GPIO_Init(OTG_FS_OverCurrent_GPIO_Port, &GPIO_InitStruct);
+ 218              		.loc 1 408 0
+ 219 0120 07A9     		add	r1, sp, #28
+ 220 0122 3846     		mov	r0, r7
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 12
+
+
+ 221 0124 FFF7FEFF 		bl	HAL_GPIO_Init
+ 222              	.LVL9:
+ 409:Src/main.c    **** 
+ 410:Src/main.c    **** }
+ 223              		.loc 1 410 0
+ 224 0128 0DB0     		add	sp, sp, #52
+ 225              	.LCFI2:
+ 226              		.cfi_def_cfa_offset 28
+ 227              		@ sp needed
+ 228 012a BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 229              	.L4:
+ 230 012e 00BF     		.align	2
+ 231              	.L3:
+ 232 0130 00380240 		.word	1073887232
+ 233 0134 00100240 		.word	1073876992
+ 234 0138 000C0240 		.word	1073875968
+ 235 013c 00000240 		.word	1073872896
+ 236 0140 00080240 		.word	1073874944
+ 237 0144 00001210 		.word	269615104
+ 238              		.cfi_endproc
+ 239              	.LFE137:
+ 241              		.section	.text.StartDefaultTask,"ax",%progbits
+ 242              		.align	1
+ 243              		.global	StartDefaultTask
+ 244              		.syntax unified
+ 245              		.thumb
+ 246              		.thumb_func
+ 247              		.fpu fpv4-sp-d16
+ 249              	StartDefaultTask:
+ 250              	.LFB138:
+ 411:Src/main.c    **** 
+ 412:Src/main.c    **** /* USER CODE BEGIN 4 */
+ 413:Src/main.c    **** 
+ 414:Src/main.c    **** /* USER CODE END 4 */
+ 415:Src/main.c    **** 
+ 416:Src/main.c    **** /* USER CODE BEGIN Header_StartDefaultTask */
+ 417:Src/main.c    **** /**
+ 418:Src/main.c    ****   * @brief  Function implementing the defaultTask thread.
+ 419:Src/main.c    ****   * @param  argument: Not used 
+ 420:Src/main.c    ****   * @retval None
+ 421:Src/main.c    ****   */
+ 422:Src/main.c    **** /* USER CODE END Header_StartDefaultTask */
+ 423:Src/main.c    **** void StartDefaultTask(void const * argument)
+ 424:Src/main.c    **** {
+ 251              		.loc 1 424 0
+ 252              		.cfi_startproc
+ 253              		@ Volatile: function does not return.
+ 254              		@ args = 0, pretend = 0, frame = 16
+ 255              		@ frame_needed = 0, uses_anonymous_args = 0
+ 256              	.LVL10:
+ 257 0000 00B5     		push	{lr}
+ 258              	.LCFI3:
+ 259              		.cfi_def_cfa_offset 4
+ 260              		.cfi_offset 14, -4
+ 261 0002 85B0     		sub	sp, sp, #20
+ 262              	.LCFI4:
+ 263              		.cfi_def_cfa_offset 24
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 13
+
+
+ 425:Src/main.c    ****   /* init code for USB_DEVICE */
+ 426:Src/main.c    ****   MX_USB_DEVICE_Init();
+ 264              		.loc 1 426 0
+ 265 0004 FFF7FEFF 		bl	MX_USB_DEVICE_Init
+ 266              	.LVL11:
+ 427:Src/main.c    **** 
+ 428:Src/main.c    ****   /* USER CODE BEGIN 5 */
+ 429:Src/main.c    ****   uint8_t txRBuffer[] ="Hello world\r\n";
+ 267              		.loc 1 429 0
+ 268 0008 094B     		ldr	r3, .L8
+ 269 000a 6C46     		mov	r4, sp
+ 270 000c 0FCB     		ldm	r3, {r0, r1, r2, r3}
+ 271 000e 07C4     		stmia	r4!, {r0, r1, r2}
+ 272 0010 2380     		strh	r3, [r4]	@ movhi
+ 273              	.L6:
+ 430:Src/main.c    ****   /* Infinite loop */
+ 431:Src/main.c    ****   for(;;)
+ 432:Src/main.c    ****   {
+ 433:Src/main.c    ****     CDC_Transmit_FS(txRBuffer, 13);
+ 274              		.loc 1 433 0 discriminator 1
+ 275 0012 0D21     		movs	r1, #13
+ 276 0014 6846     		mov	r0, sp
+ 277 0016 FFF7FEFF 		bl	CDC_Transmit_FS
+ 278              	.LVL12:
+ 434:Src/main.c    ****     HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
+ 279              		.loc 1 434 0 discriminator 1
+ 280 001a 4FF48051 		mov	r1, #4096
+ 281 001e 0548     		ldr	r0, .L8+4
+ 282 0020 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 283              	.LVL13:
+ 435:Src/main.c    ****     osDelay(2000);
+ 284              		.loc 1 435 0 discriminator 1
+ 285 0024 4FF4FA60 		mov	r0, #2000
+ 286 0028 FFF7FEFF 		bl	osDelay
+ 287              	.LVL14:
+ 288 002c F1E7     		b	.L6
+ 289              	.L9:
+ 290 002e 00BF     		.align	2
+ 291              	.L8:
+ 292 0030 00000000 		.word	.LC4
+ 293 0034 000C0240 		.word	1073875968
+ 294              		.cfi_endproc
+ 295              	.LFE138:
+ 297              		.section	.text.StartContinuousTask,"ax",%progbits
+ 298              		.align	1
+ 299              		.global	StartContinuousTask
+ 300              		.syntax unified
+ 301              		.thumb
+ 302              		.thumb_func
+ 303              		.fpu fpv4-sp-d16
+ 305              	StartContinuousTask:
+ 306              	.LFB139:
+ 436:Src/main.c    ****   }
+ 437:Src/main.c    ****   /* USER CODE END 5 */ 
+ 438:Src/main.c    **** }
+ 439:Src/main.c    **** 
+ 440:Src/main.c    **** /* USER CODE BEGIN Header_StartContinuousTask */
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 14
+
+
+ 441:Src/main.c    **** /**
+ 442:Src/main.c    **** * @brief Function implementing the continuousTask thread.
+ 443:Src/main.c    **** * @param argument: Not used
+ 444:Src/main.c    **** * @retval None
+ 445:Src/main.c    **** */
+ 446:Src/main.c    **** /* USER CODE END Header_StartContinuousTask */
+ 447:Src/main.c    **** void StartContinuousTask(void const * argument)
+ 448:Src/main.c    **** {
+ 307              		.loc 1 448 0
+ 308              		.cfi_startproc
+ 309              		@ Volatile: function does not return.
+ 310              		@ args = 0, pretend = 0, frame = 0
+ 311              		@ frame_needed = 0, uses_anonymous_args = 0
+ 312              	.LVL15:
+ 313 0000 08B5     		push	{r3, lr}
+ 314              	.LCFI5:
+ 315              		.cfi_def_cfa_offset 8
+ 316              		.cfi_offset 3, -8
+ 317              		.cfi_offset 14, -4
+ 318              	.LVL16:
+ 319              	.L11:
+ 449:Src/main.c    ****   /* USER CODE BEGIN StartContinuousTask */
+ 450:Src/main.c    ****   /* Infinite loop */
+ 451:Src/main.c    ****   for(;;)
+ 452:Src/main.c    ****   {
+ 453:Src/main.c    ****     HAL_GPIO_TogglePin(LD5_GPIO_Port, LD5_Pin);
+ 320              		.loc 1 453 0 discriminator 1
+ 321 0002 4FF48041 		mov	r1, #16384
+ 322 0006 0448     		ldr	r0, .L13
+ 323 0008 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 324              	.LVL17:
+ 454:Src/main.c    ****     osDelay(1000);
+ 325              		.loc 1 454 0 discriminator 1
+ 326 000c 4FF47A70 		mov	r0, #1000
+ 327 0010 FFF7FEFF 		bl	osDelay
+ 328              	.LVL18:
+ 329 0014 F5E7     		b	.L11
+ 330              	.L14:
+ 331 0016 00BF     		.align	2
+ 332              	.L13:
+ 333 0018 000C0240 		.word	1073875968
+ 334              		.cfi_endproc
+ 335              	.LFE139:
+ 337              		.section	.text._Error_Handler,"ax",%progbits
+ 338              		.align	1
+ 339              		.global	_Error_Handler
+ 340              		.syntax unified
+ 341              		.thumb
+ 342              		.thumb_func
+ 343              		.fpu fpv4-sp-d16
+ 345              	_Error_Handler:
+ 346              	.LFB140:
+ 455:Src/main.c    ****   }
+ 456:Src/main.c    ****   /* USER CODE END StartContinuousTask */
+ 457:Src/main.c    **** }
+ 458:Src/main.c    **** 
+ 459:Src/main.c    **** /**
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 15
+
+
+ 460:Src/main.c    ****   * @brief  This function is executed in case of error occurrence.
+ 461:Src/main.c    ****   * @param  file: The file name as string.
+ 462:Src/main.c    ****   * @param  line: The line in file as a number.
+ 463:Src/main.c    ****   * @retval None
+ 464:Src/main.c    ****   */
+ 465:Src/main.c    **** void _Error_Handler(char *file, int line)
+ 466:Src/main.c    **** {
+ 347              		.loc 1 466 0
+ 348              		.cfi_startproc
+ 349              		@ Volatile: function does not return.
+ 350              		@ args = 0, pretend = 0, frame = 0
+ 351              		@ frame_needed = 0, uses_anonymous_args = 0
+ 352              		@ link register save eliminated.
+ 353              	.LVL19:
+ 354              	.L16:
+ 355 0000 FEE7     		b	.L16
+ 356              		.cfi_endproc
+ 357              	.LFE140:
+ 359              		.section	.text.MX_I2C1_Init,"ax",%progbits
+ 360              		.align	1
+ 361              		.syntax unified
+ 362              		.thumb
+ 363              		.thumb_func
+ 364              		.fpu fpv4-sp-d16
+ 366              	MX_I2C1_Init:
+ 367              	.LFB133:
+ 251:Src/main.c    **** 
+ 368              		.loc 1 251 0
+ 369              		.cfi_startproc
+ 370              		@ args = 0, pretend = 0, frame = 0
+ 371              		@ frame_needed = 0, uses_anonymous_args = 0
+ 251:Src/main.c    **** 
+ 372              		.loc 1 251 0
+ 373 0000 08B5     		push	{r3, lr}
+ 374              	.LCFI6:
+ 375              		.cfi_def_cfa_offset 8
+ 376              		.cfi_offset 3, -8
+ 377              		.cfi_offset 14, -4
+ 253:Src/main.c    ****   hi2c1.Init.ClockSpeed = 100000;
+ 378              		.loc 1 253 0
+ 379 0002 0C48     		ldr	r0, .L21
+ 380 0004 0C4B     		ldr	r3, .L21+4
+ 381 0006 0360     		str	r3, [r0]
+ 254:Src/main.c    ****   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+ 382              		.loc 1 254 0
+ 383 0008 0C4B     		ldr	r3, .L21+8
+ 384 000a 4360     		str	r3, [r0, #4]
+ 255:Src/main.c    ****   hi2c1.Init.OwnAddress1 = 0;
+ 385              		.loc 1 255 0
+ 386 000c 0023     		movs	r3, #0
+ 387 000e 8360     		str	r3, [r0, #8]
+ 256:Src/main.c    ****   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+ 388              		.loc 1 256 0
+ 389 0010 C360     		str	r3, [r0, #12]
+ 257:Src/main.c    ****   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+ 390              		.loc 1 257 0
+ 391 0012 4FF48042 		mov	r2, #16384
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 16
+
+
+ 392 0016 0261     		str	r2, [r0, #16]
+ 258:Src/main.c    ****   hi2c1.Init.OwnAddress2 = 0;
+ 393              		.loc 1 258 0
+ 394 0018 4361     		str	r3, [r0, #20]
+ 259:Src/main.c    ****   hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+ 395              		.loc 1 259 0
+ 396 001a 8361     		str	r3, [r0, #24]
+ 260:Src/main.c    ****   hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+ 397              		.loc 1 260 0
+ 398 001c C361     		str	r3, [r0, #28]
+ 261:Src/main.c    ****   if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+ 399              		.loc 1 261 0
+ 400 001e 0362     		str	r3, [r0, #32]
+ 262:Src/main.c    ****   {
+ 401              		.loc 1 262 0
+ 402 0020 FFF7FEFF 		bl	HAL_I2C_Init
+ 403              	.LVL20:
+ 404 0024 00B9     		cbnz	r0, .L20
+ 267:Src/main.c    **** 
+ 405              		.loc 1 267 0
+ 406 0026 08BD     		pop	{r3, pc}
+ 407              	.L20:
+ 264:Src/main.c    ****   }
+ 408              		.loc 1 264 0
+ 409 0028 4FF48471 		mov	r1, #264
+ 410 002c 0448     		ldr	r0, .L21+12
+ 411 002e FFF7FEFF 		bl	_Error_Handler
+ 412              	.LVL21:
+ 413              	.L22:
+ 414 0032 00BF     		.align	2
+ 415              	.L21:
+ 416 0034 00000000 		.word	hi2c1
+ 417 0038 00540040 		.word	1073763328
+ 418 003c A0860100 		.word	100000
+ 419 0040 00000000 		.word	.LC5
+ 420              		.cfi_endproc
+ 421              	.LFE133:
+ 423              		.section	.text.MX_I2S2_Init,"ax",%progbits
+ 424              		.align	1
+ 425              		.syntax unified
+ 426              		.thumb
+ 427              		.thumb_func
+ 428              		.fpu fpv4-sp-d16
+ 430              	MX_I2S2_Init:
+ 431              	.LFB134:
+ 271:Src/main.c    **** 
+ 432              		.loc 1 271 0
+ 433              		.cfi_startproc
+ 434              		@ args = 0, pretend = 0, frame = 0
+ 435              		@ frame_needed = 0, uses_anonymous_args = 0
+ 436 0000 08B5     		push	{r3, lr}
+ 437              	.LCFI7:
+ 438              		.cfi_def_cfa_offset 8
+ 439              		.cfi_offset 3, -8
+ 440              		.cfi_offset 14, -4
+ 273:Src/main.c    ****   hi2s2.Init.Mode = I2S_MODE_MASTER_TX;
+ 441              		.loc 1 273 0
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 17
+
+
+ 442 0002 0C48     		ldr	r0, .L27
+ 443 0004 0C4B     		ldr	r3, .L27+4
+ 444 0006 0360     		str	r3, [r0]
+ 274:Src/main.c    ****   hi2s2.Init.Standard = I2S_STANDARD_PHILIPS;
+ 445              		.loc 1 274 0
+ 446 0008 4FF40073 		mov	r3, #512
+ 447 000c 4360     		str	r3, [r0, #4]
+ 275:Src/main.c    ****   hi2s2.Init.DataFormat = I2S_DATAFORMAT_16B;
+ 448              		.loc 1 275 0
+ 449 000e 0023     		movs	r3, #0
+ 450 0010 8360     		str	r3, [r0, #8]
+ 276:Src/main.c    ****   hi2s2.Init.MCLKOutput = I2S_MCLKOUTPUT_DISABLE;
+ 451              		.loc 1 276 0
+ 452 0012 C360     		str	r3, [r0, #12]
+ 277:Src/main.c    ****   hi2s2.Init.AudioFreq = I2S_AUDIOFREQ_96K;
+ 453              		.loc 1 277 0
+ 454 0014 0361     		str	r3, [r0, #16]
+ 278:Src/main.c    ****   hi2s2.Init.CPOL = I2S_CPOL_LOW;
+ 455              		.loc 1 278 0
+ 456 0016 094A     		ldr	r2, .L27+8
+ 457 0018 4261     		str	r2, [r0, #20]
+ 279:Src/main.c    ****   hi2s2.Init.ClockSource = I2S_CLOCK_PLL;
+ 458              		.loc 1 279 0
+ 459 001a 8361     		str	r3, [r0, #24]
+ 280:Src/main.c    ****   hi2s2.Init.FullDuplexMode = I2S_FULLDUPLEXMODE_ENABLE;
+ 460              		.loc 1 280 0
+ 461 001c C361     		str	r3, [r0, #28]
+ 281:Src/main.c    ****   if (HAL_I2S_Init(&hi2s2) != HAL_OK)
+ 462              		.loc 1 281 0
+ 463 001e 0123     		movs	r3, #1
+ 464 0020 0362     		str	r3, [r0, #32]
+ 282:Src/main.c    ****   {
+ 465              		.loc 1 282 0
+ 466 0022 FFF7FEFF 		bl	HAL_I2S_Init
+ 467              	.LVL22:
+ 468 0026 00B9     		cbnz	r0, .L26
+ 287:Src/main.c    **** 
+ 469              		.loc 1 287 0
+ 470 0028 08BD     		pop	{r3, pc}
+ 471              	.L26:
+ 284:Src/main.c    ****   }
+ 472              		.loc 1 284 0
+ 473 002a 4FF48E71 		mov	r1, #284
+ 474 002e 0448     		ldr	r0, .L27+12
+ 475 0030 FFF7FEFF 		bl	_Error_Handler
+ 476              	.LVL23:
+ 477              	.L28:
+ 478              		.align	2
+ 479              	.L27:
+ 480 0034 00000000 		.word	hi2s2
+ 481 0038 00380040 		.word	1073756160
+ 482 003c 00770100 		.word	96000
+ 483 0040 00000000 		.word	.LC5
+ 484              		.cfi_endproc
+ 485              	.LFE134:
+ 487              		.section	.text.MX_I2S3_Init,"ax",%progbits
+ 488              		.align	1
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 18
+
+
+ 489              		.syntax unified
+ 490              		.thumb
+ 491              		.thumb_func
+ 492              		.fpu fpv4-sp-d16
+ 494              	MX_I2S3_Init:
+ 495              	.LFB135:
+ 291:Src/main.c    **** 
+ 496              		.loc 1 291 0
+ 497              		.cfi_startproc
+ 498              		@ args = 0, pretend = 0, frame = 0
+ 499              		@ frame_needed = 0, uses_anonymous_args = 0
+ 500 0000 08B5     		push	{r3, lr}
+ 501              	.LCFI8:
+ 502              		.cfi_def_cfa_offset 8
+ 503              		.cfi_offset 3, -8
+ 504              		.cfi_offset 14, -4
+ 293:Src/main.c    ****   hi2s3.Init.Mode = I2S_MODE_MASTER_TX;
+ 505              		.loc 1 293 0
+ 506 0002 0C48     		ldr	r0, .L33
+ 507 0004 0C4B     		ldr	r3, .L33+4
+ 508 0006 0360     		str	r3, [r0]
+ 294:Src/main.c    ****   hi2s3.Init.Standard = I2S_STANDARD_PHILIPS;
+ 509              		.loc 1 294 0
+ 510 0008 4FF40072 		mov	r2, #512
+ 511 000c 4260     		str	r2, [r0, #4]
+ 295:Src/main.c    ****   hi2s3.Init.DataFormat = I2S_DATAFORMAT_16B;
+ 512              		.loc 1 295 0
+ 513 000e 0023     		movs	r3, #0
+ 514 0010 8360     		str	r3, [r0, #8]
+ 296:Src/main.c    ****   hi2s3.Init.MCLKOutput = I2S_MCLKOUTPUT_ENABLE;
+ 515              		.loc 1 296 0
+ 516 0012 C360     		str	r3, [r0, #12]
+ 297:Src/main.c    ****   hi2s3.Init.AudioFreq = I2S_AUDIOFREQ_96K;
+ 517              		.loc 1 297 0
+ 518 0014 0261     		str	r2, [r0, #16]
+ 298:Src/main.c    ****   hi2s3.Init.CPOL = I2S_CPOL_LOW;
+ 519              		.loc 1 298 0
+ 520 0016 094A     		ldr	r2, .L33+8
+ 521 0018 4261     		str	r2, [r0, #20]
+ 299:Src/main.c    ****   hi2s3.Init.ClockSource = I2S_CLOCK_PLL;
+ 522              		.loc 1 299 0
+ 523 001a 8361     		str	r3, [r0, #24]
+ 300:Src/main.c    ****   hi2s3.Init.FullDuplexMode = I2S_FULLDUPLEXMODE_DISABLE;
+ 524              		.loc 1 300 0
+ 525 001c C361     		str	r3, [r0, #28]
+ 301:Src/main.c    ****   if (HAL_I2S_Init(&hi2s3) != HAL_OK)
+ 526              		.loc 1 301 0
+ 527 001e 0362     		str	r3, [r0, #32]
+ 302:Src/main.c    ****   {
+ 528              		.loc 1 302 0
+ 529 0020 FFF7FEFF 		bl	HAL_I2S_Init
+ 530              	.LVL24:
+ 531 0024 00B9     		cbnz	r0, .L32
+ 307:Src/main.c    **** 
+ 532              		.loc 1 307 0
+ 533 0026 08BD     		pop	{r3, pc}
+ 534              	.L32:
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 19
+
+
+ 304:Src/main.c    ****   }
+ 535              		.loc 1 304 0
+ 536 0028 4FF49871 		mov	r1, #304
+ 537 002c 0448     		ldr	r0, .L33+12
+ 538 002e FFF7FEFF 		bl	_Error_Handler
+ 539              	.LVL25:
+ 540              	.L34:
+ 541 0032 00BF     		.align	2
+ 542              	.L33:
+ 543 0034 00000000 		.word	hi2s3
+ 544 0038 003C0040 		.word	1073757184
+ 545 003c 00770100 		.word	96000
+ 546 0040 00000000 		.word	.LC5
+ 547              		.cfi_endproc
+ 548              	.LFE135:
+ 550              		.section	.text.MX_SPI1_Init,"ax",%progbits
+ 551              		.align	1
+ 552              		.syntax unified
+ 553              		.thumb
+ 554              		.thumb_func
+ 555              		.fpu fpv4-sp-d16
+ 557              	MX_SPI1_Init:
+ 558              	.LFB136:
+ 311:Src/main.c    **** 
+ 559              		.loc 1 311 0
+ 560              		.cfi_startproc
+ 561              		@ args = 0, pretend = 0, frame = 0
+ 562              		@ frame_needed = 0, uses_anonymous_args = 0
+ 563 0000 08B5     		push	{r3, lr}
+ 564              	.LCFI9:
+ 565              		.cfi_def_cfa_offset 8
+ 566              		.cfi_offset 3, -8
+ 567              		.cfi_offset 14, -4
+ 314:Src/main.c    ****   hspi1.Init.Mode = SPI_MODE_MASTER;
+ 568              		.loc 1 314 0
+ 569 0002 0E48     		ldr	r0, .L39
+ 570 0004 0E4B     		ldr	r3, .L39+4
+ 571 0006 0360     		str	r3, [r0]
+ 315:Src/main.c    ****   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+ 572              		.loc 1 315 0
+ 573 0008 4FF48273 		mov	r3, #260
+ 574 000c 4360     		str	r3, [r0, #4]
+ 316:Src/main.c    ****   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+ 575              		.loc 1 316 0
+ 576 000e 0023     		movs	r3, #0
+ 577 0010 8360     		str	r3, [r0, #8]
+ 317:Src/main.c    ****   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+ 578              		.loc 1 317 0
+ 579 0012 C360     		str	r3, [r0, #12]
+ 318:Src/main.c    ****   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+ 580              		.loc 1 318 0
+ 581 0014 0361     		str	r3, [r0, #16]
+ 319:Src/main.c    ****   hspi1.Init.NSS = SPI_NSS_SOFT;
+ 582              		.loc 1 319 0
+ 583 0016 4361     		str	r3, [r0, #20]
+ 320:Src/main.c    ****   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+ 584              		.loc 1 320 0
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 20
+
+
+ 585 0018 4FF40072 		mov	r2, #512
+ 586 001c 8261     		str	r2, [r0, #24]
+ 321:Src/main.c    ****   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+ 587              		.loc 1 321 0
+ 588 001e C361     		str	r3, [r0, #28]
+ 322:Src/main.c    ****   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+ 589              		.loc 1 322 0
+ 590 0020 0362     		str	r3, [r0, #32]
+ 323:Src/main.c    ****   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+ 591              		.loc 1 323 0
+ 592 0022 4362     		str	r3, [r0, #36]
+ 324:Src/main.c    ****   hspi1.Init.CRCPolynomial = 10;
+ 593              		.loc 1 324 0
+ 594 0024 8362     		str	r3, [r0, #40]
+ 325:Src/main.c    ****   if (HAL_SPI_Init(&hspi1) != HAL_OK)
+ 595              		.loc 1 325 0
+ 596 0026 0A23     		movs	r3, #10
+ 597 0028 C362     		str	r3, [r0, #44]
+ 326:Src/main.c    ****   {
+ 598              		.loc 1 326 0
+ 599 002a FFF7FEFF 		bl	HAL_SPI_Init
+ 600              	.LVL26:
+ 601 002e 00B9     		cbnz	r0, .L38
+ 331:Src/main.c    **** 
+ 602              		.loc 1 331 0
+ 603 0030 08BD     		pop	{r3, pc}
+ 604              	.L38:
+ 328:Src/main.c    ****   }
+ 605              		.loc 1 328 0
+ 606 0032 4FF4A471 		mov	r1, #328
+ 607 0036 0348     		ldr	r0, .L39+8
+ 608 0038 FFF7FEFF 		bl	_Error_Handler
+ 609              	.LVL27:
+ 610              	.L40:
+ 611              		.align	2
+ 612              	.L39:
+ 613 003c 00000000 		.word	hspi1
+ 614 0040 00300140 		.word	1073819648
+ 615 0044 00000000 		.word	.LC5
+ 616              		.cfi_endproc
+ 617              	.LFE136:
+ 619              		.section	.text.SystemClock_Config,"ax",%progbits
+ 620              		.align	1
+ 621              		.global	SystemClock_Config
+ 622              		.syntax unified
+ 623              		.thumb
+ 624              		.thumb_func
+ 625              		.fpu fpv4-sp-d16
+ 627              	SystemClock_Config:
+ 628              	.LFB132:
+ 186:Src/main.c    **** 
+ 629              		.loc 1 186 0
+ 630              		.cfi_startproc
+ 631              		@ args = 0, pretend = 0, frame = 104
+ 632              		@ frame_needed = 0, uses_anonymous_args = 0
+ 633 0000 00B5     		push	{lr}
+ 634              	.LCFI10:
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 21
+
+
+ 635              		.cfi_def_cfa_offset 4
+ 636              		.cfi_offset 14, -4
+ 637 0002 9BB0     		sub	sp, sp, #108
+ 638              	.LCFI11:
+ 639              		.cfi_def_cfa_offset 112
+ 640              	.LBB8:
+ 194:Src/main.c    **** 
+ 641              		.loc 1 194 0
+ 642 0004 0022     		movs	r2, #0
+ 643 0006 0192     		str	r2, [sp, #4]
+ 644 0008 314B     		ldr	r3, .L49
+ 645 000a 196C     		ldr	r1, [r3, #64]
+ 646 000c 41F08051 		orr	r1, r1, #268435456
+ 647 0010 1964     		str	r1, [r3, #64]
+ 648 0012 1B6C     		ldr	r3, [r3, #64]
+ 649 0014 03F08053 		and	r3, r3, #268435456
+ 650 0018 0193     		str	r3, [sp, #4]
+ 651 001a 019B     		ldr	r3, [sp, #4]
+ 652              	.LBE8:
+ 653              	.LBB9:
+ 196:Src/main.c    **** 
+ 654              		.loc 1 196 0
+ 655 001c 0292     		str	r2, [sp, #8]
+ 656 001e 2D49     		ldr	r1, .L49+4
+ 657 0020 0B68     		ldr	r3, [r1]
+ 658 0022 23F44043 		bic	r3, r3, #49152
+ 659 0026 43F40043 		orr	r3, r3, #32768
+ 660 002a 0B60     		str	r3, [r1]
+ 661 002c 0B68     		ldr	r3, [r1]
+ 662 002e 03F44043 		and	r3, r3, #49152
+ 663 0032 0293     		str	r3, [sp, #8]
+ 664 0034 029B     		ldr	r3, [sp, #8]
+ 665              	.LBE9:
+ 200:Src/main.c    ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+ 666              		.loc 1 200 0
+ 667 0036 0223     		movs	r3, #2
+ 668 0038 0E93     		str	r3, [sp, #56]
+ 201:Src/main.c    ****   RCC_OscInitStruct.HSICalibrationValue = 16;
+ 669              		.loc 1 201 0
+ 670 003a 0121     		movs	r1, #1
+ 671 003c 1191     		str	r1, [sp, #68]
+ 202:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 672              		.loc 1 202 0
+ 673 003e 1021     		movs	r1, #16
+ 674 0040 1291     		str	r1, [sp, #72]
+ 203:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+ 675              		.loc 1 203 0
+ 676 0042 1493     		str	r3, [sp, #80]
+ 204:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLM = 8;
+ 677              		.loc 1 204 0
+ 678 0044 1592     		str	r2, [sp, #84]
+ 205:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLN = 72;
+ 679              		.loc 1 205 0
+ 680 0046 0822     		movs	r2, #8
+ 681 0048 1692     		str	r2, [sp, #88]
+ 206:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 682              		.loc 1 206 0
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 22
+
+
+ 683 004a 4822     		movs	r2, #72
+ 684 004c 1792     		str	r2, [sp, #92]
+ 207:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLQ = 3;
+ 685              		.loc 1 207 0
+ 686 004e 1893     		str	r3, [sp, #96]
+ 208:Src/main.c    ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 687              		.loc 1 208 0
+ 688 0050 0323     		movs	r3, #3
+ 689 0052 1993     		str	r3, [sp, #100]
+ 209:Src/main.c    ****   {
+ 690              		.loc 1 209 0
+ 691 0054 0EA8     		add	r0, sp, #56
+ 692 0056 FFF7FEFF 		bl	HAL_RCC_OscConfig
+ 693              	.LVL28:
+ 694 005a 68BB     		cbnz	r0, .L46
+ 216:Src/main.c    ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 695              		.loc 1 216 0
+ 696 005c 0F23     		movs	r3, #15
+ 697 005e 0993     		str	r3, [sp, #36]
+ 218:Src/main.c    ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 698              		.loc 1 218 0
+ 699 0060 0221     		movs	r1, #2
+ 700 0062 0A91     		str	r1, [sp, #40]
+ 219:Src/main.c    ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+ 701              		.loc 1 219 0
+ 702 0064 0023     		movs	r3, #0
+ 703 0066 0B93     		str	r3, [sp, #44]
+ 220:Src/main.c    ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 704              		.loc 1 220 0
+ 705 0068 4FF48052 		mov	r2, #4096
+ 706 006c 0C92     		str	r2, [sp, #48]
+ 221:Src/main.c    **** 
+ 707              		.loc 1 221 0
+ 708 006e 0D93     		str	r3, [sp, #52]
+ 223:Src/main.c    ****   {
+ 709              		.loc 1 223 0
+ 710 0070 09A8     		add	r0, sp, #36
+ 711 0072 FFF7FEFF 		bl	HAL_RCC_ClockConfig
+ 712              	.LVL29:
+ 713 0076 18BB     		cbnz	r0, .L47
+ 228:Src/main.c    ****   PeriphClkInitStruct.PLLI2S.PLLI2SN = 200;
+ 714              		.loc 1 228 0
+ 715 0078 0123     		movs	r3, #1
+ 716 007a 0393     		str	r3, [sp, #12]
+ 229:Src/main.c    ****   PeriphClkInitStruct.PLLI2S.PLLI2SM = 16;
+ 717              		.loc 1 229 0
+ 718 007c C823     		movs	r3, #200
+ 719 007e 0593     		str	r3, [sp, #20]
+ 230:Src/main.c    ****   PeriphClkInitStruct.PLLI2S.PLLI2SR = 2;
+ 720              		.loc 1 230 0
+ 721 0080 1023     		movs	r3, #16
+ 722 0082 0493     		str	r3, [sp, #16]
+ 231:Src/main.c    ****   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+ 723              		.loc 1 231 0
+ 724 0084 0223     		movs	r3, #2
+ 725 0086 0693     		str	r3, [sp, #24]
+ 232:Src/main.c    ****   {
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 23
+
+
+ 726              		.loc 1 232 0
+ 727 0088 03A8     		add	r0, sp, #12
+ 728 008a FFF7FEFF 		bl	HAL_RCCEx_PeriphCLKConfig
+ 729              	.LVL30:
+ 730 008e D8B9     		cbnz	r0, .L48
+ 239:Src/main.c    **** 
+ 731              		.loc 1 239 0
+ 732 0090 FFF7FEFF 		bl	HAL_RCC_GetHCLKFreq
+ 733              	.LVL31:
+ 734 0094 104B     		ldr	r3, .L49+8
+ 735 0096 A3FB0030 		umull	r3, r0, r3, r0
+ 736 009a 8009     		lsrs	r0, r0, #6
+ 737 009c FFF7FEFF 		bl	HAL_SYSTICK_Config
+ 738              	.LVL32:
+ 243:Src/main.c    **** 
+ 739              		.loc 1 243 0
+ 740 00a0 0420     		movs	r0, #4
+ 741 00a2 FFF7FEFF 		bl	HAL_SYSTICK_CLKSourceConfig
+ 742              	.LVL33:
+ 246:Src/main.c    **** }
+ 743              		.loc 1 246 0
+ 744 00a6 0022     		movs	r2, #0
+ 745 00a8 0F21     		movs	r1, #15
+ 746 00aa 4FF0FF30 		mov	r0, #-1
+ 747 00ae FFF7FEFF 		bl	HAL_NVIC_SetPriority
+ 748              	.LVL34:
+ 247:Src/main.c    **** 
+ 749              		.loc 1 247 0
+ 750 00b2 1BB0     		add	sp, sp, #108
+ 751              	.LCFI12:
+ 752              		.cfi_remember_state
+ 753              		.cfi_def_cfa_offset 4
+ 754              		@ sp needed
+ 755 00b4 5DF804FB 		ldr	pc, [sp], #4
+ 756              	.L46:
+ 757              	.LCFI13:
+ 758              		.cfi_restore_state
+ 211:Src/main.c    ****   }
+ 759              		.loc 1 211 0
+ 760 00b8 D321     		movs	r1, #211
+ 761 00ba 0848     		ldr	r0, .L49+12
+ 762 00bc FFF7FEFF 		bl	_Error_Handler
+ 763              	.LVL35:
+ 764              	.L47:
+ 225:Src/main.c    ****   }
+ 765              		.loc 1 225 0
+ 766 00c0 E121     		movs	r1, #225
+ 767 00c2 0648     		ldr	r0, .L49+12
+ 768 00c4 FFF7FEFF 		bl	_Error_Handler
+ 769              	.LVL36:
+ 770              	.L48:
+ 234:Src/main.c    ****   }
+ 771              		.loc 1 234 0
+ 772 00c8 EA21     		movs	r1, #234
+ 773 00ca 0448     		ldr	r0, .L49+12
+ 774 00cc FFF7FEFF 		bl	_Error_Handler
+ 775              	.LVL37:
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 24
+
+
+ 776              	.L50:
+ 777              		.align	2
+ 778              	.L49:
+ 779 00d0 00380240 		.word	1073887232
+ 780 00d4 00700040 		.word	1073770496
+ 781 00d8 D34D6210 		.word	274877907
+ 782 00dc 00000000 		.word	.LC5
+ 783              		.cfi_endproc
+ 784              	.LFE132:
+ 786              		.section	.text.main,"ax",%progbits
+ 787              		.align	1
+ 788              		.global	main
+ 789              		.syntax unified
+ 790              		.thumb
+ 791              		.thumb_func
+ 792              		.fpu fpv4-sp-d16
+ 794              	main:
+ 795              	.LFB131:
+ 101:Src/main.c    ****   /* USER CODE BEGIN 1 */
+ 796              		.loc 1 101 0
+ 797              		.cfi_startproc
+ 798              		@ Volatile: function does not return.
+ 799              		@ args = 0, pretend = 0, frame = 40
+ 800              		@ frame_needed = 0, uses_anonymous_args = 0
+ 801 0000 00B5     		push	{lr}
+ 802              	.LCFI14:
+ 803              		.cfi_def_cfa_offset 4
+ 804              		.cfi_offset 14, -4
+ 805 0002 8BB0     		sub	sp, sp, #44
+ 806              	.LCFI15:
+ 807              		.cfi_def_cfa_offset 48
+ 109:Src/main.c    **** 
+ 808              		.loc 1 109 0
+ 809 0004 FFF7FEFF 		bl	HAL_Init
+ 810              	.LVL38:
+ 116:Src/main.c    **** 
+ 811              		.loc 1 116 0
+ 812 0008 FFF7FEFF 		bl	SystemClock_Config
+ 813              	.LVL39:
+ 123:Src/main.c    ****   MX_I2C1_Init();
+ 814              		.loc 1 123 0
+ 815 000c FFF7FEFF 		bl	MX_GPIO_Init
+ 816              	.LVL40:
+ 124:Src/main.c    ****   MX_I2S2_Init();
+ 817              		.loc 1 124 0
+ 818 0010 FFF7FEFF 		bl	MX_I2C1_Init
+ 819              	.LVL41:
+ 125:Src/main.c    ****   MX_I2S3_Init();
+ 820              		.loc 1 125 0
+ 821 0014 FFF7FEFF 		bl	MX_I2S2_Init
+ 822              	.LVL42:
+ 126:Src/main.c    ****   MX_SPI1_Init();
+ 823              		.loc 1 126 0
+ 824 0018 FFF7FEFF 		bl	MX_I2S3_Init
+ 825              	.LVL43:
+ 127:Src/main.c    ****   /* USER CODE BEGIN 2 */
+ 826              		.loc 1 127 0
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 25
+
+
+ 827 001c FFF7FEFF 		bl	MX_SPI1_Init
+ 828              	.LVL44:
+ 146:Src/main.c    ****   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+ 829              		.loc 1 146 0
+ 830 0020 0D4C     		ldr	r4, .L54
+ 831 0022 05AD     		add	r5, sp, #20
+ 832 0024 2646     		mov	r6, r4
+ 833 0026 0FCE     		ldmia	r6!, {r0, r1, r2, r3}
+ 834 0028 0FC5     		stmia	r5!, {r0, r1, r2, r3}
+ 835 002a 3368     		ldr	r3, [r6]
+ 836 002c 2B60     		str	r3, [r5]
+ 147:Src/main.c    **** 
+ 837              		.loc 1 147 0
+ 838 002e 0021     		movs	r1, #0
+ 839 0030 05A8     		add	r0, sp, #20
+ 840 0032 FFF7FEFF 		bl	osThreadCreate
+ 841              	.LVL45:
+ 842 0036 094B     		ldr	r3, .L54+4
+ 843 0038 1860     		str	r0, [r3]
+ 150:Src/main.c    ****   continuousTaskHandle = osThreadCreate(osThread(continuousTask), NULL);
+ 844              		.loc 1 150 0
+ 845 003a 6D46     		mov	r5, sp
+ 846 003c 1434     		adds	r4, r4, #20
+ 847 003e 0FCC     		ldmia	r4!, {r0, r1, r2, r3}
+ 848 0040 0FC5     		stmia	r5!, {r0, r1, r2, r3}
+ 849 0042 2368     		ldr	r3, [r4]
+ 850 0044 2B60     		str	r3, [r5]
+ 151:Src/main.c    **** 
+ 851              		.loc 1 151 0
+ 852 0046 0021     		movs	r1, #0
+ 853 0048 6846     		mov	r0, sp
+ 854 004a FFF7FEFF 		bl	osThreadCreate
+ 855              	.LVL46:
+ 856 004e 044B     		ldr	r3, .L54+8
+ 857 0050 1860     		str	r0, [r3]
+ 163:Src/main.c    ****   
+ 858              		.loc 1 163 0
+ 859 0052 FFF7FEFF 		bl	osKernelStart
+ 860              	.LVL47:
+ 861              	.L52:
+ 862 0056 FEE7     		b	.L52
+ 863              	.L55:
+ 864              		.align	2
+ 865              	.L54:
+ 866 0058 00000000 		.word	.LANCHOR0
+ 867 005c 00000000 		.word	defaultTaskHandle
+ 868 0060 00000000 		.word	continuousTaskHandle
+ 869              		.cfi_endproc
+ 870              	.LFE131:
+ 872              		.comm	continuousTaskHandle,4,4
+ 873              		.comm	defaultTaskHandle,4,4
+ 874              		.comm	hspi1,88,4
+ 875              		.comm	hi2s3,72,4
+ 876              		.comm	hi2s2,72,4
+ 877              		.comm	hi2c1,84,4
+ 878              		.section	.rodata
+ 879              		.align	2
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 26
+
+
+ 880              		.set	.LANCHOR0,. + 0
+ 881              	.LC6:
+ 882 0000 10000000 		.word	.LC0
+ 883 0004 00000000 		.word	StartDefaultTask
+ 884 0008 0000     		.short	0
+ 885 000a 0000     		.space	2
+ 886 000c 00000000 		.word	0
+ 887 0010 80000000 		.word	128
+ 888              	.LC7:
+ 889 0014 00000000 		.word	.LC2
+ 890 0018 00000000 		.word	StartContinuousTask
+ 891 001c 0000     		.short	0
+ 892 001e 0000     		.space	2
+ 893 0020 00000000 		.word	0
+ 894 0024 80000000 		.word	128
+ 895              		.section	.rodata.MX_I2C1_Init.str1.4,"aMS",%progbits,1
+ 896              		.align	2
+ 897              	.LC5:
+ 898 0000 5372632F 		.ascii	"Src/main.c\000"
+ 898      6D61696E 
+ 898      2E6300
+ 899              		.section	.rodata.StartDefaultTask.str1.4,"aMS",%progbits,1
+ 900              		.align	2
+ 901              	.LC4:
+ 902 0000 48656C6C 		.ascii	"Hello world\015\012\000"
+ 902      6F20776F 
+ 902      726C640D 
+ 902      0A00
+ 903              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 904              		.align	2
+ 905              	.LC2:
+ 906 0000 636F6E74 		.ascii	"continuousTask\000"
+ 906      696E756F 
+ 906      75735461 
+ 906      736B00
+ 907 000f 00       		.space	1
+ 908              	.LC0:
+ 909 0010 64656661 		.ascii	"defaultTask\000"
+ 909      756C7454 
+ 909      61736B00 
+ 910              		.text
+ 911              	.Letext0:
+ 912              		.file 2 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 913              		.file 3 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 914              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 915              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 916              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
+ 917              		.file 7 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 918              		.file 8 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\include
+ 919              		.file 9 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\lib\\gcc\\arm-none-eab
+ 920              		.file 10 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\includ
+ 921              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 922              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h"
+ 923              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
+ 924              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 925              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 926              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h"
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 27
+
+
+ 927              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s.h"
+ 928              		.file 18 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h"
+ 929              		.file 19 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 930              		.file 20 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h"
+ 931              		.file 21 "c:\\program files (x86)\\gnu tools arm embedded\\7 2018-q2-update\\arm-none-eabi\\includ
+ 932              		.file 22 "Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h"
+ 933              		.file 23 "Inc/usb_device.h"
+ 934              		.file 24 "Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h"
+ 935              		.file 25 "Inc/usbd_cdc_if.h"
+ 936              		.file 26 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h"
+ 937              		.file 27 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 28
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:18     .text.MX_GPIO_Init:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:24     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:232    .text.MX_GPIO_Init:00000130 $d
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:242    .text.StartDefaultTask:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:249    .text.StartDefaultTask:00000000 StartDefaultTask
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:292    .text.StartDefaultTask:00000030 $d
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:298    .text.StartContinuousTask:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:305    .text.StartContinuousTask:00000000 StartContinuousTask
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:333    .text.StartContinuousTask:00000018 $d
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:338    .text._Error_Handler:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:345    .text._Error_Handler:00000000 _Error_Handler
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:360    .text.MX_I2C1_Init:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:366    .text.MX_I2C1_Init:00000000 MX_I2C1_Init
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:416    .text.MX_I2C1_Init:00000034 $d
+                            *COM*:00000054 hi2c1
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:424    .text.MX_I2S2_Init:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:430    .text.MX_I2S2_Init:00000000 MX_I2S2_Init
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:480    .text.MX_I2S2_Init:00000034 $d
+                            *COM*:00000048 hi2s2
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:488    .text.MX_I2S3_Init:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:494    .text.MX_I2S3_Init:00000000 MX_I2S3_Init
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:543    .text.MX_I2S3_Init:00000034 $d
+                            *COM*:00000048 hi2s3
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:551    .text.MX_SPI1_Init:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:557    .text.MX_SPI1_Init:00000000 MX_SPI1_Init
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:613    .text.MX_SPI1_Init:0000003c $d
+                            *COM*:00000058 hspi1
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:620    .text.SystemClock_Config:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:627    .text.SystemClock_Config:00000000 SystemClock_Config
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:779    .text.SystemClock_Config:000000d0 $d
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:787    .text.main:00000000 $t
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:794    .text.main:00000000 main
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:866    .text.main:00000058 $d
+                            *COM*:00000004 defaultTaskHandle
+                            *COM*:00000004 continuousTaskHandle
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:879    .rodata:00000000 $d
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:896    .rodata.MX_I2C1_Init.str1.4:00000000 $d
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:900    .rodata.StartDefaultTask.str1.4:00000000 $d
+C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s:904    .rodata.str1.4:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_GPIO_Init
+MX_USB_DEVICE_Init
+CDC_Transmit_FS
+HAL_GPIO_TogglePin
+osDelay
+HAL_I2C_Init
+HAL_I2S_Init
+HAL_SPI_Init
+HAL_RCC_OscConfig
+HAL_RCC_ClockConfig
+HAL_RCCEx_PeriphCLKConfig
+HAL_RCC_GetHCLKFreq
+HAL_SYSTICK_Config
+ARM GAS  C:\Users\calta\AppData\Local\Temp\ccIOiZlw.s 			page 29
+
+
+HAL_SYSTICK_CLKSourceConfig
+HAL_NVIC_SetPriority
+HAL_Init
+osThreadCreate
+osKernelStart

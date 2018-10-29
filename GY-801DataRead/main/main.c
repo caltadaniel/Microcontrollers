@@ -118,7 +118,7 @@ void vAccelerometerTask(void *pvParameters)
 
 	TickType_t tElapsedTicks;
 	TickType_t tLastTimeCall;
-	TickType_t tSamplingTime = pdMS_TO_TICKS(1);
+	TickType_t tSamplingTime = pdMS_TO_TICKS(10);
 	bool bEnableMeas = true;
 	int16_t x, y, z;
 	uint16_t index;
